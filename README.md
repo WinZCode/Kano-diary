@@ -71,11 +71,24 @@ Toàn bộ nằm trong `src/lib/calc/` dưới dạng **hàm thuần** (pure fun
 
 Kiểm chứng với số liệu sheet: Nam, 25 tuổi, 171 cm, 83 kg, 23% mỡ, vận động Nhẹ, thâm hụt 500 → LBM 63.9 · BMR 1.750 · TDEE 2.406 · Mục tiêu 1.906 kcal · Protein 141 g · 29 tuần.
 
-> ⚠️ Các điểm sau **chưa chốt** — sẽ hỏi xác nhận trước khi code:
-> - Mapping tốc độ → thâm hụt (đề xuất: Chậm 250 · Vừa 500 · Nhanh 750 kcal, giới hạn ≤ 1%/tuần cân nặng).
-> - Sàn calo an toàn (đề xuất: không thấp hơn BMR, hoặc 1.500 nam / 1.200 nữ).
-> - Chia Carb / Fat (đề xuất: Fat 25–30% calo, Carb = phần còn lại).
-> - Hỗ trợ mục tiêu **tăng cân** (thặng dư calo) ngoài giảm cân.
+### Quy tắc đã chốt (2026-11-17)
+| Chủ đề | Quy tắc |
+|---|---|
+| Mục tiêu | **Giảm / Duy trì / Tăng** cân |
+| Tốc độ | Chênh **250 / 500 / 750 kcal/ngày** (Chậm / Vừa / Nhanh) — giảm = thâm hụt, tăng = thặng dư |
+| Sàn calo (khi giảm) | Không dưới **1.500 kcal (nam) / 1.200 kcal (nữ)**; dưới BMR chỉ **cảnh báo**. Áp sàn → tính lại số tuần theo thâm hụt thực tế. TDEE < sàn → ăn bằng TDEE, khuyên tăng vận động |
+| Chia macro | Nhiều lựa chọn như [calculator.net](https://www.calculator.net/macro-calculator.html), quy đổi 4/4/9 kcal/g |
+
+| Kiểu macro | Protein | Carb | Fat |
+|---|---|---|---|
+| **Theo sheet** (mặc định, cần % mỡ) | 2.2 g × khối nạc | phần còn lại | 25% |
+| Cân bằng | 25% | 50% | 25% |
+| Ít béo | 27.5% | 52.5% | 20% |
+| Ít carb | 30% | 40% | 30% |
+| Nhiều đạm | 35% | 42.5% | 22.5% |
+
+Kèm giới hạn: đường < 10% calo, chất béo bão hòa < 10% calo.
+Code: `src/lib/calc/` (hàm `calcPlan` tổng hợp), hằng số ở `src/constants/nutrition.ts`, test ở `tests/calc/`.
 
 ---
 
@@ -249,7 +262,7 @@ Mockup dùng **DM Sans** cho chữ thường, nhưng DM Sans không có dấu ti
 - [x] **Bước 2** — Khởi tạo Next.js 16 + Tailwind 4 + design tokens từ mockup
 - [x] **Bước 3** — UI primitives pixel (`components/ui`) + AppShell responsive (xem tại `/ui` khi chạy dev)
 - [x] **Bước 4** — Supabase: schema + RLS (`profiles`, `foods`, 5 bảng nhật ký), đăng nhập email/mật khẩu _(bảng `plans` dời sang Bước 5–6)_
-- [ ] Bước 5 — `lib/calc` + test (chốt công thức với người dùng)
+- [x] **Bước 5** — `lib/calc` + test: BMR/TDEE/sàn calo/số tuần/5 kiểu macro (đã chốt công thức)
 - [ ] Bước 6 — Onboarding + Plan
 - [ ] Bước 7 — Nhật ký: ăn uống, vận động, nước, ngủ, cân
 - [ ] Bước 8 — Dashboard + Progress + biểu đồ

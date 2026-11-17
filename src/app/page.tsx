@@ -1,6 +1,6 @@
 /*
- * Trang gốc "/": chuyển thẳng vào Tổng quan.
- * Bước 4 (auth) sẽ đổi thành: chưa đăng nhập → /login, chưa onboarding → /onboarding.
+ * Trang gốc "/": chuyển vào Tổng quan. Người chưa đăng nhập đã bị proxy đưa về /login trước đó.
+ * Bước 6 sẽ thêm: chưa onboarding → /onboarding.
  */
 import { redirect } from "next/navigation";
 

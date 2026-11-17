@@ -115,6 +115,10 @@ export function calcBmrKatch(leanMassKg: number): number {
 
 - **Mọi bảng bật RLS** với policy `user_id = auth.uid()`. Bảng `foods`: đọc được dòng `user_id is null` (món hệ thống).
 - Thay đổi schema chỉ qua file migration trong `supabase/migrations/` (tên `YYYYMMDDHHMMSS_mo_ta.sql`). Không sửa migration đã chạy — tạo migration mới.
+- Lấy người dùng ở server **chỉ** qua `getCurrentUser()` (`src/lib/auth/current-user.ts`) — gọi trong `<Suspense>`. Không dùng `supabase.auth.getSession()` ở server để xác thực (không kiểm chữ ký JWT); dùng `getClaims()`.
+- `src/proxy.ts` chỉ là kiểm tra "lạc quan" để chuyển trang — **không** thay thế việc kiểm tra user trong Server Action.
+- Bảng mới: cột `user_id uuid not null default auth.uid() references auth.users on delete cascade`, bật RLS, policy dùng `(select auth.uid()) = user_id`, GRANT tường minh cho `authenticated`.
+- CHECK constraint không được phụ thuộc thời gian hiện tại (`current_date`, `now()`); kiểm tra kiểu đó bằng Zod.
 - `service_role` key **chỉ** dùng ở server, không bao giờ có tiền tố `NEXT_PUBLIC_`.
 - Không commit `.env.local` hay secret. Biến mới phải thêm vào `.env.example`.
 

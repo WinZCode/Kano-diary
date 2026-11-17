@@ -223,6 +223,21 @@ npm run dev                  # http://localhost:3000
 
 > Lưu ý: Next.js 16 không chạy trên Node 16. Nếu máy mặc định Node cũ, chuyển bằng `nvm use` trước khi chạy.
 
+### Cài đặt Supabase (1 lần)
+1. Tạo project tại [supabase.com](https://supabase.com) — region **Southeast Asia (Singapore)**.
+2. **Project Settings → API Keys**: copy *Project URL* và *anon / publishable key* vào `.env.local`.
+3. **SQL Editor**: dán và chạy lần lượt từng file trong `supabase/migrations/` (theo thứ tự tên file).
+4. **Authentication → URL Configuration**:
+   - *Site URL*: `http://localhost:3000` (đổi thành domain thật khi deploy)
+   - *Redirect URLs*: thêm `http://localhost:3000/auth/callback`
+5. **Authentication → Sign In / Providers → Email**: bật/tắt *Confirm email*.
+   Khi phát triển nên **tắt** (email miễn phí của Supabase chỉ gửi ~2 email/giờ); **bật lại trước khi cho người khác dùng**.
+
+### Xác thực hoạt động thế nào
+- `src/proxy.ts` chạy trước mọi trang: làm mới phiên, chưa đăng nhập → `/login?next=...`.
+- `getCurrentUser()` (`src/lib/auth/current-user.ts`) là nơi duy nhất đọc user ở server.
+- RLS trong Postgres là lớp bảo vệ cuối: kể cả code sai, user cũng không đọc được dữ liệu người khác.
+
 ### Font
 Mockup dùng **DM Sans** cho chữ thường, nhưng DM Sans không có dấu tiếng Việt → app dùng **Be Vietnam Pro**. **JetBrains Mono** (tiêu đề, nhãn) giữ nguyên. **Silkscreen** (pixel) không có dấu tiếng Việt nên chỉ dùng cho số và chữ không dấu.
 
@@ -233,7 +248,7 @@ Mockup dùng **DM Sans** cho chữ thường, nhưng DM Sans không có dấu ti
 - [x] **Bước 1** — Cấu trúc thư mục, README, CLAUDE.md
 - [x] **Bước 2** — Khởi tạo Next.js 16 + Tailwind 4 + design tokens từ mockup
 - [x] **Bước 3** — UI primitives pixel (`components/ui`) + AppShell responsive (xem tại `/ui` khi chạy dev)
-- [ ] Bước 4 — Supabase: schema, RLS, auth
+- [x] **Bước 4** — Supabase: schema + RLS (`profiles`, `foods`, 5 bảng nhật ký), đăng nhập email/mật khẩu _(bảng `plans` dời sang Bước 5–6)_
 - [ ] Bước 5 — `lib/calc` + test (chốt công thức với người dùng)
 - [ ] Bước 6 — Onboarding + Plan
 - [ ] Bước 7 — Nhật ký: ăn uống, vận động, nước, ngủ, cân

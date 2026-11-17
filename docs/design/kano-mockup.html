@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="sticker">
+  <title>Theo dõi Kano — Nhật ký Dinh dưỡng, Calo & Vóc dáng 8-bit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..900;1,9..40,400..900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Pastel Pink 8-bit Pixel Art Palette — High-Contrast Sharp Dark Magenta */
+      --background: #fff0f7;               /* pastel sakura pink canvas */
+      --background-grid: #ffd9ec;          /* subtle pixel grid dot */
+      --surface-container-low: #ffffff;    /* crisp white pixel cards */
+      --surface-container: #ffe4f1;        /* soft rose input wells & strips */
+      --surface-container-high: #ffcce5;   /* deeper pastel rose hover/active */
+
+      /* Ink — High Contrast Dark Magenta */
+      --on-surface: #4a0730;               /* sharp dark magenta (>12:1 on white/pink) */
+      --on-surface-variant: #70164a;       /* rich plum-magenta (>7.8:1) */
+
+      /* Pixel Borders & Rules */
+      --outline: #8f1d5e;                  /* crisp pixel border magenta */
+      --outline-variant: #f0b2d2;          /* soft pixel hairline/gridline */
+
+      /* Accents */
+      --primary: #c21875;                  /* vivid hot magenta-pink (>5.5:1 on white) */
+      --primary-hover: #a1105f;
+      --on-primary: #ffffff;
+      --primary-container: #ffbddf;        /* bubblegum pastel badge */
+      --on-primary-container: #4a0730;
+      --secondary: #682496;                /* retro pixel grape purple (>7.9:1) */
+      --secondary-container: #eedbff;
+      --tertiary: #006f9e;                 /* pixel water cyan (>5.3:1 on white) */
+      --tertiary-container: #d9f3ff;
+      --error: #b8142c;
+      --on-error: #ffffff;
+      --error-container: #ffe0e5;
+
+      /* Semantic */
+      --positive: #137544;                 /* pixel emerald green (>5.4:1) */
+      --positive-container: #dbf7e8;
+      --warning: #a35200;                  /* pixel amber (>5.1:1) */
+      --warning-container: #fff0d6;
+
+      /* Data series */
+      --data-1: #c21875;                   /* hot magenta */
+      --data-2: #682496;                   /* pixel grape */
+      --data-3: #006f9e;                   /* pixel cyan */
+      --data-4: #a35200;                   /* pixel amber */
+      --data-context: #d6a4c0;             /* muted rose context */
+
+      /* Fonts — Silkscreen for ASCII/numbers + JetBrains Mono & DM Sans for crisp Vietnamese */
+      --font-pixel: 'Silkscreen', 'JetBrains Mono', monospace;
+      --font-headline: 'JetBrains Mono', 'DM Sans', sans-serif;
+      --font-body: 'DM Sans', 'JetBrains Mono', sans-serif;
+      --font-label: 'JetBrains Mono', monospace;
+
+      /* Type scale (Focused Tool dense dashboard) */
+      --display-size: clamp(1.5rem, 1.2rem + 1.1vw, 2.05rem);
+      --headline-size: clamp(1.125rem, 1rem + 0.45vw, 1.35rem);
+      --subhead-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.08rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.12vw, 1rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.25rem;
+      --space-2xl: 3.5rem;
+
+      /* Pixel Shape & Hard Stepped Shadows */
+      --rounded: 2px;
+      --rounded-lg: 4px;
+      --rounded-full: 2px;
+      --pixel-border: 3px solid var(--outline);
+      --pixel-border-thin: 2px solid var(--outline);
+      --shadow-pixel: 4px 4px 0 var(--outline);
+      --shadow-pixel-sm: 2px 2px 0 var(--outline);
+      --shadow-pixel-pink: 4px 4px 0 var(--primary);
+      --shadow-pixel-purple: 4px 4px 0 var(--secondary);
+      --shadow-pixel-cyan: 4px 4px 0 var(--tertiary);
+
+      /* Focus & Motion */
+      --focus: var(--primary);
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 100ms;
+      --dur-short: 180ms;
+      --dur-long: 320ms;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      background-image:
+        radial-gradient(var(--background-grid) 1.5px, transparent 1.5px);
+      background-size: 16px 16px;
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      position: static !important;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      max-width: 1280px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * {
+      min-width: 0;
+    }
+
+    /* Pixel Card */
+    .pixel-card {
+      background: var(--surface-container-low);
+      border: var(--pixel-border);
+      border-radius: var(--rounded-lg);
+      box-shadow: var(--shadow-pixel);
+      padding: var(--space-lg);
+    }
+    .pixel-card--pink {
+      box-shadow: var(--shadow-pixel-pink);
+    }
+    .pixel-card--purple {
+      box-shadow: var(--shadow-pixel-purple);
+    }
+    .pixel-card--cyan {
+      box-shadow: var(--shadow-pixel-cyan);
+    }
+    .pixel-card--soft {
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      box-shadow: var(--shadow-pixel-sm);
+      padding: var(--space-md);
+    }
+
+    /* Typography */
+    .app-title {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: var(--display-size);
+      line-height: 1.15;
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .app-title em {
+      font-style: normal;
+      color: var(--primary);
+    }
+    .section-title {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: var(--headline-size);
+      line-height: 1.25;
+      margin: 0;
+      color: var(--on-surface);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .label-caps {
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      display: block;
+      margin-bottom: var(--space-xs);
+    }
+    .pixel-num {
+      font-family: var(--font-pixel);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+    .tabular-num {
+      font-family: var(--font-label);
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+    }
+    .muted-note {
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+      margin: 0;
+    }
+
+    /* Header & Top Bar */
+    .top-banner {
+      background: var(--surface-container-low);
+      border: var(--pixel-border);
+      box-shadow: var(--shadow-pixel);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .top-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .pixel-avatar-box {
+      width: 56px;
+      height: 56px;
+      background: var(--surface-container);
+      border: var(--pixel-border);
+      box-shadow: var(--shadow-pixel-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .user-switcher {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      padding: var(--space-xs);
+    }
+    .user-tab {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      border: 2px solid transparent;
+      background: transparent;
+      color: var(--on-surface);
+      font-family: var(--font-headline);
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+    .user-tab:hover {
+      background: var(--surface-container-high);
+    }
+    .user-tab.is-active {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--outline);
+      box-shadow: var(--shadow-pixel-sm);
+    }
+
+    .toolbar-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: 2px dashed var(--outline-variant);
+    }
+    .date-nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .action-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Pixel Buttons */
+    .btn {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      border: var(--pixel-border-thin);
+      border-radius: var(--rounded);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      box-shadow: var(--shadow-pixel-sm);
+      transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+      text-decoration: none;
+    }
+    .btn:hover:not(:disabled) {
+      background: var(--surface-container);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--outline);
+    }
+    .btn:active:not(:disabled) {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 var(--outline);
+    }
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--outline);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    .btn-secondary {
+      background: var(--secondary);
+      color: var(--on-primary);
+      border-color: var(--outline);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--on-surface);
+    }
+    .btn-cyan {
+      background: var(--tertiary);
+      color: var(--on-primary);
+      border-color: var(--outline);
+    }
+    .btn-cyan:hover:not(:disabled) {
+      background: var(--on-surface);
+    }
+    .btn-sm {
+      min-height: 36px;
+      padding: 4px 10px;
+      font-size: 0.8125rem;
+    }
+    .btn-danger {
+      background: var(--error-container);
+      color: var(--error);
+      border-color: var(--error);
+    }
+
+    /* Inputs & Forms */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .input-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr));
+      gap: var(--space-sm);
+      align-items: end;
+    }
+    .pixel-input, .pixel-select {
+      min-height: 44px;
+      width: 100%;
+      padding: 8px 12px;
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      border-radius: var(--rounded);
+      color: var(--on-surface);
+      font-weight: 600;
+      transition: background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+    .pixel-select {
+      padding-right: 28px;
+    }
+    .pixel-input:focus, .pixel-select:focus {
+      background: var(--surface-container-low);
+      box-shadow: var(--shadow-pixel-sm);
+    }
+
+    /* KPI Hero Strip */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-md);
+    }
+    .kpi-card {
+      background: var(--surface-container-low);
+      border: var(--pixel-border);
+      box-shadow: var(--shadow-pixel);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .kpi-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .kpi-value {
+      font-family: var(--font-pixel);
+      font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.85rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--on-surface);
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-value em {
+      font-style: normal;
+      color: var(--primary);
+    }
+
+    /* Badges & Status Pills */
+    .pixel-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 2px solid var(--outline);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    .pixel-badge[data-tone="ok"] {
+      background: var(--positive-container);
+      color: var(--positive);
+      border-color: var(--positive);
+    }
+    .pixel-badge[data-tone="warn"] {
+      background: var(--warning-container);
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+    .pixel-badge[data-tone="alert"] {
+      background: var(--error-container);
+      color: var(--error);
+      border-color: var(--error);
+    }
+    .pixel-badge[data-tone="cyan"] {
+      background: var(--tertiary-container);
+      color: var(--tertiary);
+      border-color: var(--tertiary);
+    }
+    .pixel-badge[data-tone="purple"] {
+      background: var(--secondary-container);
+      color: var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    /* Pixel Progress Bars */
+    .pixel-bar-track {
+      width: 100%;
+      height: 18px;
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      position: relative;
+      overflow: hidden;
+    }
+    .pixel-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      transition: width var(--dur-short) var(--ease-out);
+      background-image: repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 10px,
+        var(--surface-container-low) 10px,
+        var(--surface-container-low) 12px
+      );
+      background-blend-mode: soft-light;
+    }
+    .pixel-bar-fill--purple { background-color: var(--secondary); }
+    .pixel-bar-fill--cyan { background-color: var(--tertiary); }
+    .pixel-bar-fill--amber { background-color: var(--warning); }
+    .pixel-bar-fill--green { background-color: var(--positive); }
+
+    /* Main 2-Column Workspace */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .col-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Inline Water & Sleep Grid */
+    .wellness-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-md);
+    }
+    .water-cups-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 6px;
+      margin: var(--space-sm) 0;
+    }
+    .cup-btn {
+      min-height: 44px;
+      padding: 4px 2px;
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+    }
+    .cup-btn:hover {
+      transform: translateY(-2px);
+    }
+    .cup-btn.is-filled {
+      background: var(--tertiary-container);
+      border-color: var(--tertiary);
+    }
+
+    /* Segmented Goal Buttons */
+    .seg-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .seg-btn {
+      min-height: 44px;
+      padding: 6px 8px;
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: 0.8125rem;
+      color: var(--on-surface);
+      cursor: pointer;
+      text-align: center;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .seg-btn:hover {
+      background: var(--surface-container-high);
+    }
+    .seg-btn.is-active {
+      background: var(--primary);
+      color: var(--on-primary);
+      box-shadow: var(--shadow-pixel-sm);
+    }
+    .seg-btn--purple.is-active {
+      background: var(--secondary);
+      color: var(--on-primary);
+    }
+
+    /* Filter Chips & Lists */
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: var(--space-sm) 0;
+    }
+    .filter-chip {
+      min-height: 36px;
+      padding: 4px 10px;
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      font-family: var(--font-label);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--on-surface);
+      cursor: pointer;
+    }
+    .filter-chip.is-active {
+      background: var(--on-surface);
+      color: var(--on-primary);
+    }
+
+    .catalog-list {
+      max-height: 230px;
+      overflow-y: auto;
+      border: var(--pixel-border-thin);
+      background: var(--surface-container);
+      display: flex;
+      flex-direction: column;
+    }
+    .catalog-item {
+      padding: 8px 12px;
+      border: none;
+      border-bottom: 2px solid var(--outline-variant);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      width: 100%;
+      min-height: 44px;
+    }
+    .catalog-item:last-child {
+      border-bottom: none;
+    }
+    .catalog-item:hover {
+      background: var(--surface-container-low);
+    }
+    .catalog-item.is-selected {
+      background: var(--primary-container);
+      font-weight: 700;
+    }
+
+    /* Tables & Logs */
+    .pixel-table-wrap {
+      overflow-x: auto;
+      border: var(--pixel-border-thin);
+      background: var(--surface-container-low);
+    }
+    .pixel-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .pixel-table th {
+      background: var(--surface-container);
+      color: var(--on-surface);
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: var(--pixel-border-thin);
+      white-space: nowrap;
+    }
+    .pixel-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--outline-variant);
+      vertical-align: middle;
+    }
+    .pixel-table tr:nth-child(even) td {
+      background: var(--background);
+    }
+    .pixel-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .empty-box {
+      padding: var(--space-md);
+      background: var(--surface-container);
+      border: 2px dashed var(--outline);
+      text-align: center;
+      color: var(--on-surface-variant);
+      font-size: 0.9rem;
+    }
+
+    .calc-formula-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(155px, 100%), 1fr));
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+    .mini-stat {
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      padding: 8px 10px;
+    }
+    .mini-stat-val {
+      font-family: var(--font-pixel);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--on-surface);
+    }
+
+    .chart-box {
+      width: 100%;
+      min-height: 220px;
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      padding: var(--space-sm);
+    }
+
+    .inline-toast {
+      padding: 8px 12px;
+      background: var(--positive-container);
+      border: 2px solid var(--positive);
+      color: var(--positive);
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: none;
+    }
+    .inline-toast.is-visible {
+      display: block;
+    }
+
+    .weight-stepper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .weight-input-compact {
+      width: 78px;
+      min-height: 40px;
+      padding: 4px 6px;
+      text-align: center;
+      background: var(--surface-container);
+      border: var(--pixel-border-thin);
+      font-family: var(--font-pixel);
+      font-weight: 700;
+    }
+
+    .collapsible-body {
+      margin-top: var(--space-md);
+    }
+    .collapsible-body.is-hidden {
+      display: none;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 1024px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-sm);
+        gap: var(--space-md);
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .wellness-grid {
+        grid-template-columns: 1fr;
+      }
+      .water-cups-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .seg-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-grid">
+    <!-- TOP HEADER & USER SWITCHER -->
+    <header class="top-banner">
+      <div class="top-row">
+        <div class="brand-group">
+          <div class="pixel-avatar-box" id="header-avatar" aria-hidden="true"></div>
+          <div>
+            <h1 class="app-title">Theo dõi <em>Kano</em></h1>
+            <p class="muted-note">Nhật ký Calo, Macro, Nước, Giấc ngủ & Vận động phong cách 8-bit Pastel</p>
+          </div>
+        </div>
+
+        <div class="user-switcher" role="tablist" aria-label="Chuyển đổi hồ sơ người dùng">
+          <button type="button" class="user-tab is-active" id="tab-user-1" role="tab" aria-selected="true" onclick="switchUser('user1')">
+            <span id="tab-name-user1">Kano</span>
+          </button>
+          <button type="button" class="user-tab" id="tab-user-2" role="tab" aria-selected="false" onclick="switchUser('user2')">
+            <span id="tab-name-user2">Người dùng 2</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar-row">
+        <div class="date-nav">
+          <button type="button" class="btn btn-sm" onclick="shiftDate(-1)">&lt; Hôm qua</button>
+          <div class="field-group">
+            <label for="active-date-input" class="label-caps" style="margin-bottom:0;">Ngày theo dõi</label>
+            <input type="date" id="active-date-input" class="pixel-input" style="min-height:38px; padding:4px 8px;" onchange="setActiveDate(this.value)">
+          </div>
+          <button type="button" class="btn btn-sm" onclick="shiftDate(1)">Ngày mai &gt;</button>
+          <button type="button" class="btn btn-sm" onclick="goToday()">Hôm nay</button>
+        </div>
+
+        <div class="action-cluster">
+          <button type="button" class="btn btn-sm" onclick="loadSampleDayPreset()">Nạp thực đơn gợi ý</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="exportToExcelCSV()">Xuất dữ liệu Excel (.CSV)</button>
+        </div>
+      </div>
+      <div id="global-toast" class="inline-toast" role="status" aria-live="polite"></div>
+    </header>
+
+    <!-- HERO KPI STRIP (LEAD WITH THE ANSWER) -->
+    <section aria-label="Tổng quan chỉ số hôm nay" class="kpi-grid">
+      <!-- KPI 1: Calo Nạp vs Mục tiêu -->
+      <article class="kpi-card">
+        <div class="kpi-head">
+          <span class="label-caps" style="margin:0;">CALO NẠP HÔM NAY</span>
+          <span class="pixel-badge" id="kpi-cal-badge">Đang tính</span>
+        </div>
+        <div class="kpi-value"><em id="kpi-cal-in">0</em> / <span id="kpi-cal-target">1650</span> <span style="font-size:0.8rem;">kcal</span></div>
+        <div class="pixel-bar-track" aria-hidden="true">
+          <div class="pixel-bar-fill" id="kpi-cal-bar" style="width:0%;"></div>
+        </div>
+        <p class="muted-note" id="kpi-cal-note">Còn lại 1,650 kcal để đạt mục tiêu.</p>
+      </article>
+
+      <!-- KPI 2: Protein & Macro -->
+      <article class="kpi-card">
+        <div class="kpi-head">
+          <span class="label-caps" style="margin:0;">ĐẠM (PROTEIN) MỤC TIÊU</span>
+          <span class="pixel-badge" data-tone="purple" id="kpi-pro-badge">0%</span>
+        </div>
+        <div class="kpi-value"><em id="kpi-pro-in">0</em> / <span id="kpi-pro-target">94</span> <span style="font-size:0.8rem;">g</span></div>
+        <div class="pixel-bar-track" aria-hidden="true">
+          <div class="pixel-bar-fill pixel-bar-fill--purple" id="kpi-pro-bar" style="width:0%;"></div>
+        </div>
+        <p class="muted-note" id="kpi-macro-note">Carb: 0/190g · Fat: 0/46g</p>
+      </article>
+
+      <!-- KPI 3: BMR & TDEE Thực tế -->
+      <article class="kpi-card">
+        <div class="kpi-head">
+          <span class="label-caps" style="margin:0;">TDEE THỰC TẾ HÔM NAY</span>
+          <span class="pixel-badge" data-tone="cyan" id="kpi-work-badge">VP 8h</span>
+        </div>
+        <div class="kpi-value"><span id="kpi-tdee">1529</span> <span style="font-size:0.8rem;">kcal</span></div>
+        <p class="muted-note" id="kpi-bmr-note">BMR: 1,258 kcal · Vận động: +0 kcal</p>
+        <p class="muted-note" id="kpi-balance-note">Cân bằng: -1,529 kcal</p>
+      </article>
+
+      <!-- KPI 4: Cân nặng hôm nay & Lộ trình -->
+      <article class="kpi-card">
+        <div class="kpi-head">
+          <span class="label-caps" style="margin:0;">CÂN NẶNG HÔM NAY</span>
+          <span class="pixel-badge" data-tone="ok" id="kpi-timeline-badge">Lộ trình</span>
+        </div>
+        <div class="weight-stepper">
+          <button type="button" class="btn btn-sm" aria-label="Giảm 0.1 kg" onclick="nudgeTodayWeight(-0.1)">-0.1</button>
+          <input type="number" step="0.1" min="25" max="250" id="today-weight-input" class="weight-input-compact" aria-label="Cân nặng hôm nay (kg)" onchange="updateTodayWeight(this.value)">
+          <span class="tabular-num">kg</span>
+          <button type="button" class="btn btn-sm" aria-label="Tăng 0.1 kg" onclick="nudgeTodayWeight(0.1)">+0.1</button>
+        </div>
+        <p class="muted-note" id="kpi-lean-note">Khối cơ nạc: 39.7 kg · Mỡ mục tiêu: 21%</p>
+      </article>
+    </section>
+
+    <!-- MAIN 2-COLUMN WORKSPACE -->
+    <main class="workspace-grid">
+      <!-- LEFT COLUMN -->
+      <div class="col-stack">
+        <!-- 1. PROFILE, GOALS & FLEXIBLE WORK SCHEDULE -->
+        <section class="pixel-card pixel-card--pink" aria-labelledby="sec-profile-title">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <h2 class="section-title" id="sec-profile-title">
+              <span aria-hidden="true">★</span> Hồ sơ, Mục tiêu & Lịch làm việc
+            </h2>
+            <button type="button" class="btn btn-sm" id="toggle-profile-btn" onclick="toggleProfileSection()">Thu gọn</button>
+          </div>
+
+          <div id="profile-body" class="collapsible-body">
+            <div class="input-row">
+              <div class="field-group">
+                <label for="prof-name" class="label-caps">Tên người dùng</label>
+                <input type="text" id="prof-name" class="pixel-input" maxlength="24" oninput="updateProfileField('name', this.value)">
+              </div>
+              <div class="field-group">
+                <label for="prof-sex" class="label-caps">Giới tính</label>
+                <select id="prof-sex" class="pixel-select" onchange="updateProfileField('sex', this.value)">
+                  <option value="female">Nữ</option>
+                  <option value="male">Nam</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="prof-age" class="label-caps">Tuổi</label>
+                <input type="number" id="prof-age" class="pixel-input" min="12" max="90" onchange="updateProfileField('age', Number(this.value))">
+              </div>
+              <div class="field-group">
+                <label for="prof-height" class="label-caps">Chiều cao (cm)</label>
+                <input type="number" id="prof-height" class="pixel-input" min="100" max="230" onchange="updateProfileField('height', Number(this.value))">
+              </div>
+            </div>
+
+            <div class="input-row" style="margin-top:var(--space-sm);">
+              <div class="field-group">
+                <label for="prof-base-weight" class="label-caps">Cân nặng nền (kg)</label>
+                <input type="number" id="prof-base-weight" class="pixel-input" step="0.1" min="25" max="250" onchange="updateProfileField('baseWeight', Number(this.value))">
+              </div>
+              <div class="field-group">
+                <label for="prof-target-weight" class="label-caps">Cân nặng mục tiêu (kg)</label>
+                <input type="number" id="prof-target-weight" class="pixel-input" step="0.1" min="25" max="250" onchange="updateProfileField('targetWeight', Number(this.value))">
+              </div>
+              <div class="field-group">
+                <label for="prof-bodyfat" class="label-caps">% Mỡ hiện tại (ước tính/đo)</label>
+                <input type="number" id="prof-bodyfat" class="pixel-input" step="0.5" min="5" max="55" onchange="updateProfileField('bodyFat', Number(this.value))">
+              </div>
+              <div class="field-group">
+                <label for="prof-target-bf" class="label-caps">% Mỡ mục tiêu</label>
+                <input type="number" id="prof-target-bf" class="pixel-input" step="0.5" min="5" max="45" onchange="updateProfileField('targetBodyFat', Number(this.value))">
+              </div>
+            </div>
+
+            <div style="margin-top:var(--space-md);">
+              <span class="label-caps">Mục tiêu Cân nặng</span>
+              <div class="seg-grid" role="group" aria-label="Mục tiêu cân nặng">
+                <button type="button" class="seg-btn" id="goal-w-gain" onclick="setWeightGoal('gain')">Tăng cân</button>
+                <button type="button" class="seg-btn" id="goal-w-maintain" onclick="setWeightGoal('maintain')">Giữ cân</button>
+                <button type="button" class="seg-btn" id="goal-w-lose" onclick="setWeightGoal('lose')">Giảm cân</button>
+              </div>
+            </div>
+
+            <div style="margin-top:var(--space-md);">
+              <span class="label-caps">Mục tiêu Thành phần Cơ thể</span>
+              <div class="seg-grid" role="group" aria-label="Mục tiêu thành phần cơ thể">
+                <button type="button" class="seg-btn seg-btn--purple" id="goal-c-recomp" onclick="setCompGoal('recomp')">Tăng cơ giảm mỡ</button>
+                <button type="button" class="seg-btn seg-btn--purple" id="goal-c-muscle" onclick="setCompGoal('muscle')">Tăng cơ</button>
+                <button type="button" class="seg-btn seg-btn--purple" id="goal-c-fatloss" onclick="setCompGoal('fatloss')">Giảm mỡ</button>
+              </div>
+            </div>
+
+            <!-- Flexible Work Schedule -->
+            <div class="pixel-card--soft" style="margin-top:var(--space-md);">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <span class="label-caps" style="margin:0;">Lịch làm việc văn phòng ngày đang chọn</span>
+                <span class="tabular-num" id="work-kcal-preview">+120 kcal sinh hoạt VP</span>
+              </div>
+              <div class="chip-row">
+                <button type="button" class="filter-chip" id="work-btn-8" onclick="setWorkSchedule(8)">Full ngày (8h)</button>
+                <button type="button" class="filter-chip" id="work-btn-4" onclick="setWorkSchedule(4)">Nửa ngày T7 (4h)</button>
+                <button type="button" class="filter-chip" id="work-btn-0" onclick="setWorkSchedule(0)">Ngày nghỉ (0h)</button>
+                <div style="display:inline-flex; align-items:center; gap:6px;">
+                  <label for="work-hours-custom" class="label-caps" style="margin:0;">Tùy chỉnh (giờ):</label>
+                  <input type="number" id="work-hours-custom" class="pixel-input" style="width:74px; min-height:36px; padding:4px 8px;" min="0" max="16" step="0.5" onchange="setWorkSchedule(Number(this.value))">
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Calculation Formula Summary -->
+            <div class="calc-formula-grid" aria-label="Kết quả tính toán động">
+              <div class="mini-stat">
+                <span class="label-caps">BMR (Mifflin-St Jeor)</span>
+                <div class="mini-stat-val" id="calc-bmr">1,258 kcal</div>
+              </div>
+              <div class="mini-stat">
+                <span class="label-caps">TDEE Động</span>
+                <div class="mini-stat-val" id="calc-tdee">1,529 kcal</div>
+              </div>
+              <div class="mini-stat">
+                <span class="label-caps">Calo Mục tiêu / ngày</span>
+                <div class="mini-stat-val" id="calc-target-cal">1,729 kcal</div>
+              </div>
+              <div class="mini-stat">
+                <span class="label-caps">Khối cơ nạc (Lean Mass)</span>
+                <div class="mini-stat-val" id="calc-lean-mass">39.7 kg</div>
+              </div>
+              <div class="mini-stat">
+                <span class="label-caps">Macro Mục tiêu (P / C / F)</span>
+                <div class="mini-stat-val" style="font-size:0.88rem;" id="calc-macros">94g / 219g / 48g</div>
+              </div>
+              <div class="mini-stat">
+                <span class="label-caps">Thời gian dự kiến</span>
+                <div class="mini-stat-val" style="font-size:0.88rem;" id="calc-timeline">~11 tuần (77 ngày)</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. INTEGRATED INLINE WATER & SLEEP TRACKER -->
+        <section class="wellness-grid" aria-label="Theo dõi Nước uống và Giấc ngủ">
+          <!-- Water Tracker -->
+          <article class="pixel-card pixel-card--cyan">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+              <h2 class="section-title" style="font-size:1.05rem;">Nước uống hôm nay</h2>
+              <span class="pixel-badge" data-tone="cyan" id="water-status-badge">0 / 8 ly</span>
+            </div>
+            <p class="muted-note" style="margin-top:4px;">Mục tiêu 2.0L – 2.5L (tự đặt: <strong class="tabular-num" id="water-target-label">2,200 ml</strong>)</p>
+
+            <div class="water-cups-grid" id="water-cups-grid" role="group" aria-label="Chọn số ly nước đã uống"></div>
+
+            <div class="pixel-bar-track" aria-hidden="true">
+              <div class="pixel-bar-fill pixel-bar-fill--cyan" id="water-bar-fill" style="width:0%;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+              <span class="pixel-num" id="water-ml-readout">0 / 2,200 ml</span>
+              <span class="tabular-num" id="water-pct-readout">0%</span>
+            </div>
+
+            <div class="chip-row" style="margin-top:var(--space-sm); margin-bottom:0;">
+              <button type="button" class="btn btn-cyan btn-sm" onclick="addWater(200)">+200ml</button>
+              <button type="button" class="btn btn-cyan btn-sm" onclick="addWater(350)">+350ml</button>
+              <button type="button" class="btn btn-cyan btn-sm" onclick="addWater(500)">+500ml</button>
+              <button type="button" class="btn btn-sm" onclick="addWater(-200)">-200ml</button>
+            </div>
+          </article>
+
+          <!-- Sleep Tracker -->
+          <article class="pixel-card pixel-card--purple">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+              <h2 class="section-title" style="font-size:1.05rem;">Giấc ngủ & Phục hồi</h2>
+              <span class="pixel-badge" id="sleep-status-badge">Chưa ghi</span>
+            </div>
+            <p class="muted-note" style="margin-top:4px;">Khuyến nghị 7 – 8 giờ/đêm để phục hồi cơ bắp.</p>
+
+            <div class="input-row" style="margin-top:var(--space-sm);">
+              <div class="field-group">
+                <label for="sleep-hours-input" class="label-caps">Số giờ ngủ</label>
+                <input type="number" id="sleep-hours-input" class="pixel-input" min="0" max="16" step="0.5" onchange="updateSleep(this.value, null)">
+              </div>
+              <div class="field-group">
+                <label for="sleep-quality-select" class="label-caps">Chất lượng giấc ngủ</label>
+                <select id="sleep-quality-select" class="pixel-select" onchange="updateSleep(null, this.value)">
+                  <option value="deep">Ngủ sâu, sảng khoái</option>
+                  <option value="normal">Bình thường</option>
+                  <option value="light">Chập chờn, mệt</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="chip-row" style="margin-top:var(--space-sm); margin-bottom:0;">
+              <button type="button" class="btn btn-sm" onclick="updateSleep(6.5, null)">6.5h</button>
+              <button type="button" class="btn btn-sm" onclick="updateSleep(7, null)">7h</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="updateSleep(7.5, null)">7.5h</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="updateSleep(8, null)">8h</button>
+              <button type="button" class="btn btn-sm" onclick="updateSleep(9, null)">9h</button>
+            </div>
+            <p class="muted-note" style="margin-top:var(--space-sm);" id="sleep-recovery-note">Nhập số giờ ngủ đêm qua để xem đánh giá phục hồi.</p>
+          </article>
+        </section>
+
+        <!-- 3. FOOD & MACRO AUTO-CALCULATOR -->
+        <section class="pixel-card" aria-labelledby="sec-food-title">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <h2 class="section-title" id="sec-food-title">Máy tính Bữa ăn & Dinh dưỡng Việt Nam</h2>
+            <button type="button" class="btn btn-sm" onclick="toggleCustomFoodForm()">+ Tự thêm món</button>
+          </div>
+          <p class="muted-note">Dữ liệu chuẩn hóa theo Bảng Thành phần Thực phẩm Việt Nam (Viện Dinh dưỡng Quốc gia) & thực đơn phổ biến.</p>
+
+          <!-- Custom Food Inline Form -->
+          <div id="custom-food-panel" class="pixel-card--soft is-hidden" style="margin-top:var(--space-sm);">
+            <span class="label-caps">Thêm món ăn tự tạo vào kho dữ liệu cá nhân</span>
+            <div class="input-row">
+              <div class="field-group">
+                <label for="cf-name" class="label-caps">Tên món ăn</label>
+                <input type="text" id="cf-name" class="pixel-input" placeholder="VD: Sinh tố bơ sữa">
+              </div>
+              <div class="field-group">
+                <label for="cf-unit" class="label-caps">Đơn vị</label>
+                <input type="text" id="cf-unit" class="pixel-input" value="1 phần">
+              </div>
+              <div class="field-group">
+                <label for="cf-cal" class="label-caps">Calo (kcal)</label>
+                <input type="number" id="cf-cal" class="pixel-input" min="0" value="200">
+              </div>
+            </div>
+            <div class="input-row" style="margin-top:var(--space-sm);">
+              <div class="field-group">
+                <label for="cf-pro" class="label-caps">Đạm (g)</label>
+                <input type="number" id="cf-pro" class="pixel-input" min="0" step="0.1" value="10">
+              </div>
+              <div class="field-group">
+                <label for="cf-carb" class="label-caps">Tinh bột (g)</label>
+                <input type="number" id="cf-carb" class="pixel-input" min="0" step="0.1" value="20">
+              </div>
+              <div class="field-group">
+                <label for="cf-fat" class="label-caps">Chất béo (g)</label>
+                <input type="number" id="cf-fat" class="pixel-input" min="0" step="0.1" value="8">
+              </div>
+              <button type="button" class="btn btn-primary" onclick="saveCustomFood()">Lưu món mới</button>
+            </div>
+          </div>
+
+          <!-- Search & Categories -->
+          <div class="field-group" style="margin-top:var(--space-md);">
+            <label for="food-search-input" class="label-caps">Tìm kiếm món ăn Việt Nam</label>
+            <input type="search" id="food-search-input" class="pixel-input" placeholder="Nhập tên món: ức gà, phở, cơm tấm, trứng, rau muống..." oninput="renderFoodCatalog()">
+          </div>
+
+          <div class="chip-row" id="food-category-chips" role="group" aria-label="Nhóm thực phẩm"></div>
+
+          <div class="catalog-list" id="food-catalog-list" role="listbox" aria-label="Danh sách món ăn"></div>
+
+          <!-- Portion & Live Macro Preview -->
+          <div class="pixel-card--soft" style="margin-top:var(--space-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:var(--space-sm);">
+              <strong id="selected-food-title">Chọn một món phía trên</strong>
+              <span class="pixel-badge" id="selected-food-unit-badge">Đơn vị: -</span>
+            </div>
+
+            <div class="input-row">
+              <div class="field-group">
+                <label for="food-qty-input" class="label-caps">Số lượng khẩu phần</label>
+                <input type="number" id="food-qty-input" class="pixel-input" min="0.1" max="20" step="0.25" value="1" oninput="updateFoodPreview()">
+              </div>
+              <div class="field-group">
+                <label for="food-meal-select" class="label-caps">Bữa ăn</label>
+                <select id="food-meal-select" class="pixel-select">
+                  <option value="Bữa sáng">Bữa sáng</option>
+                  <option value="Bữa trưa">Bữa trưa</option>
+                  <option value="Bữa tối">Bữa tối</option>
+                  <option value="Bữa phụ">Bữa phụ</option>
+                </select>
+              </div>
+              <button type="button" class="btn btn-primary" onclick="addSelectedFoodToLog()">+ Thêm vào nhật ký</button>
+            </div>
+
+            <div class="chip-row" style="margin-top:var(--space-sm);">
+              <button type="button" class="btn btn-sm" onclick="setFoodQty(0.5)">0.5x</button>
+              <button type="button" class="btn btn-sm" onclick="setFoodQty(1)">1x</button>
+              <button type="button" class="btn btn-sm" onclick="setFoodQty(1.5)">1.5x</button>
+              <button type="button" class="btn btn-sm" onclick="setFoodQty(2)">2x</button>
+              <span class="tabular-num" id="food-preview-macros" style="margin-left:auto; align-self:center;">0 kcal · P: 0g · C: 0g · F: 0g</span>
+            </div>
+          </div>
+
+          <!-- Logged Meals Table -->
+          <div style="margin-top:var(--space-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-xs);">
+              <span class="label-caps" style="margin:0;">Nhật ký Bữa ăn trong ngày</span>
+              <span class="tabular-num" id="food-log-total">0 món · 0 kcal</span>
+            </div>
+            <div id="food-log-container"></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="col-stack">
+        <!-- 4. PHYSICAL ACTIVITY BURN ENGINE (100 ACTIVITIES) -->
+        <section class="pixel-card pixel-card--purple" aria-labelledby="sec-activity-title">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <h2 class="section-title" id="sec-activity-title">Động cơ Tính Calo Vận động</h2>
+            <span class="pixel-badge" data-tone="purple">100 hoạt động</span>
+          </div>
+          <p class="muted-note">Tự động tính năng lượng tiêu hao theo cân nặng hiện tại và thời lượng (MET × kg × giờ).</p>
+
+          <div class="field-group" style="margin-top:var(--space-md);">
+            <label for="act-search-input" class="label-caps">Tìm kiếm hoạt động (100 môn & sinh hoạt)</label>
+            <input type="search" id="act-search-input" class="pixel-input" placeholder="VD: cầu lông, bóng chuyền, squat, đi bộ, esports..." oninput="renderActivityCatalog()">
+          </div>
+
+          <div class="chip-row" id="act-category-chips" role="group" aria-label="Nhóm hoạt động"></div>
+
+          <div class="catalog-list" id="act-catalog-list" role="listbox" aria-label="Danh sách 100 hoạt động thể chất"></div>
+
+          <div class="pixel-card--soft" style="margin-top:var(--space-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:var(--space-sm);">
+              <strong id="selected-act-title">Chọn một hoạt động phía trên</strong>
+              <span class="pixel-badge" data-tone="purple" id="selected-act-met-badge">MET: -</span>
+            </div>
+
+            <div class="input-row">
+              <div class="field-group">
+                <label for="act-minutes-input" class="label-caps">Thời lượng (phút)</label>
+                <input type="number" id="act-minutes-input" class="pixel-input" min="5" max="600" step="5" value="60" oninput="updateActivityPreview()">
+              </div>
+              <div class="field-group">
+                <label class="label-caps">Tiêu hao ước tính</label>
+                <div class="pixel-input" style="display:flex; align-items:center; background:var(--surface-container-low);" id="act-burn-preview">0 kcal</div>
+              </div>
+              <button type="button" class="btn btn-secondary" onclick="addSelectedActivityToLog()">+ Ghi nhận</button>
+            </div>
+
+            <div class="chip-row" style="margin-top:var(--space-sm); margin-bottom:0;">
+              <button type="button" class="btn btn-sm" onclick="setActivityMinutes(15)">15p</button>
+              <button type="button" class="btn btn-sm" onclick="setActivityMinutes(30)">30p</button>
+              <button type="button" class="btn btn-sm" onclick="setActivityMinutes(45)">45p</button>
+              <button type="button" class="btn btn-sm" onclick="setActivityMinutes(60)">1 giờ</button>
+              <button type="button" class="btn btn-sm" onclick="setActivityMinutes(90)">1.5 giờ</button>
+            </div>
+          </div>
+
+          <div style="margin-top:var(--space-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-xs);">
+              <span class="label-caps" style="margin:0;">Nhật ký Vận động trong ngày</span>
+              <span class="tabular-num" id="act-log-total">0 phút · -0 kcal</span>
+            </div>
+            <div id="act-log-container"></div>
+          </div>
+        </section>
+
+        <!-- 5. MULTI-DAY ANALYTICS & HISTORY -->
+        <section class="pixel-card" aria-labelledby="sec-history-title">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <h2 class="section-title" id="sec-history-title">Biểu đồ 7 ngày & Lịch sử</h2>
+            <span class="pixel-badge" id="history-days-count">0 ngày có dữ liệu</span>
+          </div>
+
+          <div style="margin-top:var(--space-md);">
+            <span class="label-caps">Calo Nạp (Hồng) so với Mục tiêu (Tím) — 7 ngày quanh ngày đang chọn</span>
+            <div class="chart-box" id="calorie-chart-box"></div>
+          </div>
+
+          <div style="margin-top:var(--space-md);">
+            <span class="label-caps">Xu hướng Cân nặng (kg)</span>
+            <div class="chart-box" id="weight-chart-box" style="min-height:170px;"></div>
+          </div>
+
+          <div style="margin-top:var(--space-md);">
+            <span class="label-caps">Bảng tổng hợp các ngày đã ghi (Bấm để mở ngày đó)</span>
+            <div id="history-table-container"></div>
+          </div>
+        </section>
+
+        <!-- 6. RESEARCH-GROUNDED MUSCLE & POSTURE GUIDE -->
+        <section class="pixel-card pixel-card--soft" aria-labelledby="sec-guide-title">
+          <h2 class="section-title" id="sec-guide-title" style="font-size:1rem;">Gợi ý Tăng cơ & Tư thế Văn phòng</h2>
+          <ul style="margin:var(--space-sm) 0 0 0; padding-left:1.25rem; font-size:0.875rem; color:var(--on-surface-variant); display:flex; flex-direction:column; gap:6px;">
+            <li><strong>Đạm tối ưu (1.6 – 2.0g/kg):</strong> Với người ít ăn thịt, ưu tiên kết hợp ức gà (31g P/100g), trứng gà (6.3g P/quả), đậu phụ (10.5g P/100g) hoặc whey để bảo vệ cơ nạc.</li>
+            <li><strong>Thặng dư nhẹ (+150 – 250 kcal):</strong> Giúp xây dựng cơ bắp đều đặn khi tăng cân mà hạn chế tích mỡ thừa.</li>
+            <li><strong>Kháng lực & Chống gù văn phòng:</strong> Tập Squats, Hip Thrusts, Romanian Deadlift cho mông đùi; Lat Pulldown, Dumbbell Row và Plank để mở vai, khỏe lưng.</li>
+            <li><strong>Cân đối vi chất & Nước:</strong> Bổ sung 100–150g rau mỗi bữa chính và 2.0–2.5L nước giúp chuyển hóa đạm hiệu quả.</li>
+          </ul>
+          <p class="muted-note" style="margin-top:var(--space-sm); font-size:0.78rem;">
+            Nguồn tham khảo: Bảng Thành phần Thực phẩm Việt Nam (Viện Dinh dưỡng Quốc gia), Hướng dẫn Dinh dưỡng Bộ Y tế (QĐ 3958/QĐ-BYT), và cơ sở dữ liệu dinh dưỡng món ăn Việt Nam (Tu Farm, Long Châu, Hello Bacsi).
+          </p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    // =========================================================================
+    // 1. VIETNAMESE FOOD DATABASE (Grounded in VTN_FCT_2007 & Research Reports)
+    // =========================================================================
+    const FOOD_CATEGORIES = [
+      `Tất cả`,
+      `Cơm, Bún & Phở`,
+      `Các loại thịt`,
+      `Thủy hải sản`,
+      `Trứng, Sữa & Đậu hũ`,
+      `Rau củ & Trái cây`,
+      `Đồ uống & Phụ`,
+      `Món tự tạo`
+    ];
+
+    const BASE_FOODS = [
+      // Cơm, Bún & Phở
+      { id: `f01`, name: `Cơm trắng`, unit: `1 bát (150g)`, cat: `Cơm, Bún & Phở`, cal: 200, pro: 4.6, carb: 44.2, fat: 0.6 },
+      { id: `f02`, name: `Cơm gạo lứt`, unit: `1 bát (150g)`, cat: `Cơm, Bún & Phở`, cal: 170, pro: 4.0, carb: 36.0, fat: 1.4 },
+      { id: `f03`, name: `Cơm tấm sườn nướng`, unit: `1 dĩa`, cat: `Cơm, Bún & Phở`, cal: 580, pro: 26.0, carb: 68.0, fat: 22.0 },
+      { id: `f04`, name: `Phở bò (ít béo)`, unit: `1 tô`, cat: `Cơm, Bún & Phở`, cal: 450, pro: 25.0, carb: 60.0, fat: 15.0 },
+      { id: `f05`, name: `Phở gà`, unit: `1 tô`, cat: `Cơm, Bún & Phở`, cal: 380, pro: 22.0, carb: 52.0, fat: 11.0 },
+      { id: `f06`, name: `Bún bò Huế`, unit: `1 tô`, cat: `Cơm, Bún & Phở`, cal: 482, pro: 28.0, carb: 55.0, fat: 18.0 },
+      { id: `f07`, name: `Bún chả Hà Nội`, unit: `1 suất`, cat: `Cơm, Bún & Phở`, cal: 400, pro: 20.0, carb: 45.0, fat: 18.0 },
+      { id: `f08`, name: `Bánh mì thịt / chả`, unit: `1 ổ`, cat: `Cơm, Bún & Phở`, cal: 380, pro: 15.0, carb: 48.0, fat: 13.0 },
+      { id: `f09`, name: `Bánh mì ốp la (2 trứng)`, unit: `1 ổ`, cat: `Cơm, Bún & Phở`, cal: 340, pro: 16.0, carb: 36.0, fat: 14.0 },
+      { id: `f10`, name: `Hủ tiếu nam vang`, unit: `1 tô`, cat: `Cơm, Bún & Phở`, cal: 410, pro: 21.0, carb: 54.0, fat: 12.0 },
+      { id: `f11`, name: `Miến gà`, unit: `1 tô`, cat: `Cơm, Bún & Phở`, cal: 320, pro: 19.0, carb: 44.0, fat: 7.0 },
+      { id: `f12`, name: `Xôi gấc / Xôi đậu xanh`, unit: `1 gói (150g)`, cat: `Cơm, Bún & Phở`, cal: 350, pro: 7.5, carb: 65.0, fat: 6.5 },
+      { id: `f13`, name: `Khoai lang luộc`, unit: `1 củ vừa (150g)`, cat: `Cơm, Bún & Phở`, cal: 130, pro: 2.0, carb: 30.0, fat: 0.2 },
+      { id: `f14`, name: `Yến mạch cán dẹt`, unit: `50g khô`, cat: `Cơm, Bún & Phở`, cal: 190, pro: 6.8, carb: 33.0, fat: 3.4 },
+
+      // Các loại thịt
+      { id: `f15`, name: `Ức gà luộc / áp chảo`, unit: `100g`, cat: `Các loại thịt`, cal: 165, pro: 31.0, carb: 0.0, fat: 3.6 },
+      { id: `f16`, name: `Thịt bò thăn áp chảo`, unit: `100g`, cat: `Các loại thịt`, cal: 180, pro: 26.0, carb: 0.0, fat: 8.0 },
+      { id: `f17`, name: `Thịt heo kho tộ / kho tàu`, unit: `1 dĩa nhỏ (100g)`, cat: `Các loại thịt`, cal: 260, pro: 16.0, carb: 5.0, fat: 18.0 },
+      { id: `f18`, name: `Thịt lợn nạc vai luộc`, unit: `100g`, cat: `Các loại thịt`, cal: 155, pro: 22.0, carb: 0.0, fat: 7.0 },
+      { id: `f19`, name: `Đùi gà luộc bỏ da`, unit: `1 cái vừa (120g)`, cat: `Các loại thịt`, cal: 195, pro: 26.5, carb: 0.0, fat: 9.2 },
+      { id: `f20`, name: `Thịt băm rang sả`, unit: `100g`, cat: `Các loại thịt`, cal: 230, pro: 18.5, carb: 3.0, fat: 16.0 },
+      { id: `f21`, name: `Giò lụa (Chả lụa)`, unit: `100g`, cat: `Các loại thịt`, cal: 136, pro: 21.5, carb: 1.5, fat: 5.0 },
+      { id: `f22`, name: `Chả quế`, unit: `100g`, cat: `Các loại thịt`, cal: 245, pro: 16.5, carb: 4.0, fat: 18.0 },
+
+      // Thủy hải sản
+      { id: `f23`, name: `Cá sốt cà chua`, unit: `1 khúc (120g)`, cat: `Thủy hải sản`, cal: 180, pro: 18.0, carb: 4.0, fat: 8.0 },
+      { id: `f24`, name: `Cá hồi áp chảo`, unit: `100g`, cat: `Thủy hải sản`, cal: 208, pro: 20.4, carb: 0.0, fat: 13.4 },
+      { id: `f25`, name: `Cá thu kho`, unit: `1 khúc (100g)`, cat: `Thủy hải sản`, cal: 195, pro: 21.0, carb: 3.5, fat: 10.5 },
+      { id: `f26`, name: `Tôm hấp / luộc bỏ vỏ`, unit: `100g`, cat: `Thủy hải sản`, cal: 99, pro: 21.0, carb: 0.5, fat: 1.1 },
+      { id: `f27`, name: `Mực hấp gừng`, unit: `100g`, cat: `Thủy hải sản`, cal: 92, pro: 16.0, carb: 3.0, fat: 1.4 },
+      { id: `f28`, name: `Cá rô phi / Cá điêu hồng hấp`, unit: `100g`, cat: `Thủy hải sản`, cal: 128, pro: 26.0, carb: 0.0, fat: 2.7 },
+
+      // Trứng, Sữa & Đậu hũ
+      { id: `f29`, name: `Trứng gà luộc / ốp la`, unit: `1 quả lớn`, cat: `Trứng, Sữa & Đậu hũ`, cal: 78, pro: 6.3, carb: 0.6, fat: 5.3 },
+      { id: `f30`, name: `Lòng trắng trứng gà`, unit: `1 quả`, cat: `Trứng, Sữa & Đậu hũ`, cal: 17, pro: 3.6, carb: 0.2, fat: 0.0 },
+      { id: `f31`, name: `Đậu phụ rán / luộc`, unit: `100g (2 bìa nhỏ)`, cat: `Trứng, Sữa & Đậu hũ`, cal: 110, pro: 10.5, carb: 2.5, fat: 6.0 },
+      { id: `f32`, name: `Đậu phụ non hấp`, unit: `1 hộp (150g)`, cat: `Trứng, Sữa & Đậu hũ`, cal: 85, pro: 8.5, carb: 3.0, fat: 4.2 },
+      { id: `f33`, name: `Sữa tươi không đường`, unit: `1 hộp (180ml)`, cat: `Trứng, Sữa & Đậu hũ`, cal: 110, pro: 6.0, carb: 8.5, fat: 6.0 },
+      { id: `f34`, name: `Sữa chua không đường`, unit: `1 hũ (100g)`, cat: `Trứng, Sữa & Đậu hũ`, cal: 65, pro: 3.8, carb: 5.0, fat: 3.2 },
+      { id: `f35`, name: `Sữa chua Hy Lạp`, unit: `1 hũ (100g)`, cat: `Trứng, Sữa & Đậu hũ`, cal: 95, pro: 10.0, carb: 4.0, fat: 4.5 },
+      { id: `f36`, name: `Whey Protein (1 muỗng)`, unit: `1 muỗng (30g)`, cat: `Trứng, Sữa & Đậu hũ`, cal: 120, pro: 24.0, carb: 3.0, fat: 1.5 },
+      { id: `f37`, name: `Sữa đậu nành ít đường`, unit: `1 ly (250ml)`, cat: `Trứng, Sữa & Đậu hũ`, cal: 105, pro: 7.5, carb: 10.0, fat: 3.8 },
+
+      // Rau củ & Trái cây
+      { id: `f38`, name: `Rau muống xào dầu tỏi`, unit: `1 đĩa`, cat: `Rau củ & Trái cây`, cal: 120, pro: 3.0, carb: 8.0, fat: 8.0 },
+      { id: `f39`, name: `Rau luộc / Dưa chua`, unit: `1 đĩa (150g)`, cat: `Rau củ & Trái cây`, cal: 25, pro: 1.0, carb: 5.0, fat: 0.2 },
+      { id: `f40`, name: `Bông cải xanh luộc`, unit: `1 đĩa (150g)`, cat: `Rau củ & Trái cây`, cal: 51, pro: 4.2, carb: 10.0, fat: 0.5 },
+      { id: `f41`, name: `Salad rau trộn dầu giấm`, unit: `1 tô`, cat: `Rau củ & Trái cây`, cal: 95, pro: 2.0, carb: 9.0, fat: 5.5 },
+      { id: `f42`, name: `Canh bí đỏ / Canh rau ngót`, unit: `1 chén`, cat: `Rau củ & Trái cây`, cal: 45, pro: 2.0, carb: 7.5, fat: 0.8 },
+      { id: `f43`, name: `Chuối tiêu chín`, unit: `1 quả vừa`, cat: `Rau củ & Trái cây`, cal: 95, pro: 1.1, carb: 24.0, fat: 0.3 },
+      { id: `f44`, name: `Táo / Ổi tươi`, unit: `1 quả (150g)`, cat: `Rau củ & Trái cây`, cal: 78, pro: 0.8, carb: 19.0, fat: 0.3 },
+      { id: `f45`, name: `Quả bơ sáp`, unit: `1/2 quả (100g)`, cat: `Rau củ & Trái cây`, cal: 160, pro: 2.0, carb: 8.5, fat: 14.7 },
+
+      // Đồ uống & Phụ
+      { id: `f46`, name: `Cà phê sữa đá`, unit: `1 ly (200ml)`, cat: `Đồ uống & Phụ`, cal: 140, pro: 2.5, carb: 21.0, fat: 5.0 },
+      { id: `f47`, name: `Cà phê đen đá (không đường)`, unit: `1 ly`, cat: `Đồ uống & Phụ`, cal: 5, pro: 0.3, carb: 0.5, fat: 0.0 },
+      { id: `f48`, name: `Trà sữa trân châu (50% đường)`, unit: `1 ly (500ml)`, cat: `Đồ uống & Phụ`, cal: 310, pro: 3.5, carb: 52.0, fat: 9.5 },
+      { id: `f49`, name: `Hạt hạnh nhân / Hạt điều`, unit: `30g (1 nắm tay)`, cat: `Đồ uống & Phụ`, cal: 175, pro: 6.0, carb: 6.5, fat: 15.0 },
+      { id: `f50`, name: `Bánh flan caramel`, unit: `1 cái`, cat: `Đồ uống & Phụ`, cal: 145, pro: 4.5, carb: 20.0, fat: 5.2 }
+    ];
+
+    // =========================================================================
+    // 2. 100 PHYSICAL ACTIVITIES DATABASE (MET values)
+    // =========================================================================
+    const ACT_CATEGORIES = [
+      `Tất cả`,
+      `Vợt & Bóng`,
+      `Gym & Kháng lực`,
+      `Chạy & Đi bộ`,
+      `Đạp xe & Bơi`,
+      `Yoga, Nhảy & Võ`,
+      `Văn phòng & Esports`,
+      `Sinh hoạt`
+    ];
+
+    const ACTIVITIES_100 = [
+      // 1-15: Vợt & Bóng
+      { id: `a001`, name: `Cầu lông (đánh phong trào)`, cat: `Vợt & Bóng`, met: 6.7 },
+      { id: `a002`, name: `Cầu lông (thi đấu cường độ cao)`, cat: `Vợt & Bóng`, met: 7.5 },
+      { id: `a003`, name: `Bóng chuyền (sân trong nhà / bãi biển)`, cat: `Vợt & Bóng`, met: 6.7 },
+      { id: `a004`, name: `Bóng chuyền (thi đấu chuyên sâu)`, cat: `Vợt & Bóng`, met: 8.0 },
+      { id: `a005`, name: `Pickleball`, cat: `Vợt & Bóng`, met: 5.5 },
+      { id: `a006`, name: `Tennis (đánh đơn)`, cat: `Vợt & Bóng`, met: 7.3 },
+      { id: `a007`, name: `Tennis (đánh đôi)`, cat: `Vợt & Bóng`, met: 5.0 },
+      { id: `a008`, name: `Bóng bàn`, cat: `Vợt & Bóng`, met: 4.0 },
+      { id: `a009`, name: `Bóng đá (sân mini 5-7 người)`, cat: `Vợt & Bóng`, met: 7.5 },
+      { id: `a010`, name: `Bóng rổ (tập & thi đấu)`, cat: `Vợt & Bóng`, met: 6.5 },
+      { id: `a011`, name: `Bóng ném`, cat: `Vợt & Bóng`, met: 8.0 },
+      { id: `a012`, name: `Squash (bóng quần)`, cat: `Vợt & Bóng`, met: 7.3 },
+      { id: `a013`, name: `Cầu mây`, cat: `Vợt & Bóng`, met: 6.0 },
+      { id: `a014`, name: `Golf (đi bộ mang gậy)`, cat: `Vợt & Bóng`, met: 4.3 },
+      { id: `a015`, name: `Bắn cung`, cat: `Vợt & Bóng`, met: 3.5 },
+
+      // 16-33: Gym & Kháng lực
+      { id: `a016`, name: `Tập tạ tổng hợp (Resistance Training)`, cat: `Gym & Kháng lực`, met: 5.0 },
+      { id: `a017`, name: `Squats & Hip Thrusts (tập mông đùi)`, cat: `Gym & Kháng lực`, met: 6.0 },
+      { id: `a018`, name: `Romanian Deadlift & Lunges`, cat: `Gym & Kháng lực`, met: 5.5 },
+      { id: `a019`, name: `Lat Pulldown & Dumbbell Row (lưng xô)`, cat: `Gym & Kháng lực`, met: 4.8 },
+      { id: `a020`, name: `Tập thân trên (Push-up, vai, tay)`, cat: `Gym & Kháng lực`, met: 4.5 },
+      { id: `a021`, name: `Tập bụng & Core (Plank, Crunch)`, cat: `Gym & Kháng lực`, met: 3.8 },
+      { id: `a022`, name: `Tập tạ nhẹ / Phục hồi cơ`, cat: `Gym & Kháng lực`, met: 3.5 },
+      { id: `a023`, name: `CrossFit / WOD cường độ cao`, cat: `Gym & Kháng lực`, met: 8.0 },
+      { id: `a024`, name: `Kettlebell Swing (tạ ấm)`, cat: `Gym & Kháng lực`, met: 7.5 },
+      { id: `a025`, name: `Calisthenics (xà đơn, xà kép)`, cat: `Gym & Kháng lực`, met: 5.5 },
+      { id: `a026`, name: `Tập dây kháng lực (Resistance Band)`, cat: `Gym & Kháng lực`, met: 3.5 },
+      { id: `a027`, name: `Đi bộ leo dốc trên máy (Incline Walk)`, cat: `Gym & Kháng lực`, met: 5.3 },
+      { id: `a028`, name: `Máy chèo thuyền (Rowing Machine)`, cat: `Gym & Kháng lực`, met: 7.0 },
+      { id: `a029`, name: `Máy trượt Elliptical`, cat: `Gym & Kháng lực`, met: 5.0 },
+      { id: `a030`, name: `Máy leo cầu thang (StairMaster)`, cat: `Gym & Kháng lực`, met: 8.5 },
+      { id: `a031`, name: `HIIT cường độ cao ngắt quãng`, cat: `Gym & Kháng lực`, met: 8.5 },
+      { id: `a032`, name: `Tabata ngắt quãng`, cat: `Gym & Kháng lực`, met: 8.0 },
+      { id: `a033`, name: `Giãn cơ cột sống & Foam Rolling`, cat: `Gym & Kháng lực`, met: 2.3 },
+
+      // 34-50: Chạy & Đi bộ
+      { id: `a034`, name: `Đi bộ chậm dạo phố (3.5 km/h)`, cat: `Chạy & Đi bộ`, met: 2.8 },
+      { id: `a035`, name: `Đi bộ vừa (4.8 km/h)`, cat: `Chạy & Đi bộ`, met: 3.5 },
+      { id: `a036`, name: `Đi bộ nhanh (6 km/h)`, cat: `Chạy & Đi bộ`, met: 4.3 },
+      { id: `a037`, name: `Leo cầu thang bộ liên tục`, cat: `Chạy & Đi bộ`, met: 7.5 },
+      { id: `a038`, name: `Chạy bộ nhẹ (Jogging 7 km/h)`, cat: `Chạy & Đi bộ`, met: 7.0 },
+      { id: `a039`, name: `Chạy bộ trung bình (9 km/h)`, cat: `Chạy & Đi bộ`, met: 9.0 },
+      { id: `a040`, name: `Chạy bộ nhanh (11 km/h)`, cat: `Chạy & Đi bộ`, met: 11.0 },
+      { id: `a041`, name: `Chạy nước rút (Sprint)`, cat: `Chạy & Đi bộ`, met: 12.5 },
+      { id: `a042`, name: `Chạy địa hình (Trail Running)`, cat: `Chạy & Đi bộ`, met: 8.5 },
+      { id: `a043`, name: `Nhảy dây nhịp chậm`, cat: `Chạy & Đi bộ`, met: 8.0 },
+      { id: `a044`, name: `Nhảy dây tốc độ nhanh`, cat: `Chạy & Đi bộ`, met: 11.0 },
+      { id: `a045`, name: `Jumping Jacks (bật tách tay chân)`, cat: `Chạy & Đi bộ`, met: 6.5 },
+      { id: `a046`, name: `Burpees liên hoàn`, cat: `Chạy & Đi bộ`, met: 8.0 },
+      { id: `a047`, name: `Leo núi nhân tạo (Rock Climbing)`, cat: `Chạy & Đi bộ`, met: 7.5 },
+      { id: `a048`, name: `Trượt patin (Rollerblading)`, cat: `Chạy & Đi bộ`, met: 7.0 },
+      { id: `a049`, name: `Trượt ván (Skateboarding)`, cat: `Chạy & Đi bộ`, met: 5.0 },
+      { id: `a050`, name: `Đi bộ leo núi dã ngoại (Hiking)`, cat: `Chạy & Đi bộ`, met: 6.0 },
+
+      // 51-62: Đạp xe & Bơi
+      { id: `a051`, name: `Đạp xe chậm thư giãn (<16 km/h)`, cat: `Đạp xe & Bơi`, met: 4.0 },
+      { id: `a052`, name: `Đạp xe vừa (16-19 km/h)`, cat: `Đạp xe & Bơi`, met: 6.0 },
+      { id: `a053`, name: `Đạp xe nhanh (22-25 km/h)`, cat: `Đạp xe & Bơi`, met: 8.5 },
+      { id: `a054`, name: `Đạp xe trong nhà (Spinning/RPM)`, cat: `Đạp xe & Bơi`, met: 7.5 },
+      { id: `a055`, name: `Đạp xe địa hình (MTB)`, cat: `Đạp xe & Bơi`, met: 8.5 },
+      { id: `a056`, name: `Bơi ếch (nhẹ - vừa)`, cat: `Đạp xe & Bơi`, met: 5.3 },
+      { id: `a057`, name: `Bơi sải tốc độ vừa`, cat: `Đạp xe & Bơi`, met: 7.0 },
+      { id: `a058`, name: `Bơi sải nhanh / Tập luyện`, cat: `Đạp xe & Bơi`, met: 9.8 },
+      { id: `a059`, name: `Bơi bướm`, cat: `Đạp xe & Bơi`, met: 11.0 },
+      { id: `a060`, name: `Thể dục dưới nước (Aqua Aerobics)`, cat: `Đạp xe & Bơi`, met: 4.5 },
+      { id: `a061`, name: `Chèo thuyền Kayak / Chèo ván SUP`, cat: `Đạp xe & Bơi`, met: 5.0 },
+      { id: `a062`, name: `Lướt sóng / Bơi lặn biển`, cat: `Đạp xe & Bơi`, met: 5.0 },
+
+      // 63-76: Yoga, Nhảy & Võ
+      { id: `a063`, name: `Yoga Hatha / Thư giãn cơ bản`, cat: `Yoga, Nhảy & Võ`, met: 2.5 },
+      { id: `a064`, name: `Yoga Vinyasa / Power Yoga`, cat: `Yoga, Nhảy & Võ`, met: 4.0 },
+      { id: `a065`, name: `Pilates thảm`, cat: `Yoga, Nhảy & Võ`, met: 3.0 },
+      { id: `a066`, name: `Pilates máy (Reformer)`, cat: `Yoga, Nhảy & Võ`, met: 3.8 },
+      { id: `a067`, name: `Aerobics / Thể dục nhịp điệu`, cat: `Yoga, Nhảy & Võ`, met: 6.5 },
+      { id: `a068`, name: `Nhảy Zumba`, cat: `Yoga, Nhảy & Võ`, met: 6.8 },
+      { id: `a069`, name: `Nhảy K-pop / Hip-hop Dance`, cat: `Yoga, Nhảy & Võ`, met: 5.5 },
+      { id: `a070`, name: `Khiêu vũ giao tiếp (Ballroom)`, cat: `Yoga, Nhảy & Võ`, met: 3.8 },
+      { id: `a071`, name: `Múa Ba lê / Múa đương đại`, cat: `Yoga, Nhảy & Võ`, met: 4.8 },
+      { id: `a072`, name: `Boxing (đấm bao cát)`, cat: `Yoga, Nhảy & Võ`, met: 5.5 },
+      { id: `a073`, name: `Kickboxing / Muay Thai`, cat: `Yoga, Nhảy & Võ`, met: 8.5 },
+      { id: `a074`, name: `Taekwondo / Karate / Vovinam`, cat: `Yoga, Nhảy & Võ`, met: 7.5 },
+      { id: `a075`, name: `Thái cực quyền (Tai Chi)`, cat: `Yoga, Nhảy & Võ`, met: 3.0 },
+      { id: `a076`, name: `Thiền & Hít thở sâu`, cat: `Yoga, Nhảy & Võ`, met: 1.3 },
+
+      // 77-86: Văn phòng & Esports
+      { id: `a077`, name: `Làm việc máy tính văn phòng thêm giờ`, cat: `Văn phòng & Esports`, met: 1.5 },
+      { id: `a078`, name: `Làm việc bàn đứng (Standing Desk)`, cat: `Văn phòng & Esports`, met: 1.8 },
+      { id: `a079`, name: `Họp hành / Thuyết trình đứng`, cat: `Văn phòng & Esports`, met: 2.0 },
+      { id: `a080`, name: `Đi lại công tác / Di chuyển sự kiện`, cat: `Văn phòng & Esports`, met: 2.5 },
+      { id: `a081`, name: `Chơi Esports / Game đối kháng tập trung`, cat: `Văn phòng & Esports`, met: 1.8 },
+      { id: `a082`, name: `Game thực tế ảo vận động (VR Beat Saber)`, cat: `Văn phòng & Esports`, met: 5.0 },
+      { id: `a083`, name: `Chơi đàn Piano / Guitar`, cat: `Văn phòng & Esports`, met: 2.0 },
+      { id: `a084`, name: `Đọc sách / Học tập viết lách`, cat: `Văn phòng & Esports`, met: 1.3 },
+      { id: `a085`, name: `Lái xe ô tô / Đi xe máy đường dài`, cat: `Văn phòng & Esports`, met: 1.8 },
+      { id: `a086`, name: `Chụp ảnh ngoài trời / Đi bộ tham quan`, cat: `Văn phòng & Esports`, met: 3.0 },
+
+      // 87-100: Sinh hoạt
+      { id: `a087`, name: `Nấu ăn & Rửa bát`, cat: `Sinh hoạt`, met: 2.3 },
+      { id: `a088`, name: `Dọn dẹp nhà cửa / Quét lau nhà`, cat: `Sinh hoạt`, met: 3.3 },
+      { id: `a089`, name: `Hút bụi sàn nhà`, cat: `Sinh hoạt`, met: 3.3 },
+      { id: `a090`, name: `Giặt giũ, phơi & gấp quần áo`, cat: `Sinh hoạt`, met: 2.2 },
+      { id: `a091`, name: `Sắp xếp đồ đạc / Dọn phòng tổng thể`, cat: `Sinh hoạt`, met: 4.5 },
+      { id: `a092`, name: `Đi siêu thị / Đi chợ xách đồ`, cat: `Sinh hoạt`, met: 2.8 },
+      { id: `a093`, name: `Làm vườn / Chăm sóc cây`, cat: `Sinh hoạt`, met: 3.8 },
+      { id: `a094`, name: `Dắt thú cưng đi dạo`, cat: `Sinh hoạt`, met: 3.0 },
+      { id: `a095`, name: `Chăm sóc & Chơi cùng trẻ nhỏ`, cat: `Sinh hoạt`, met: 3.5 },
+      { id: `a096`, name: `Tắm rửa & Chăm sóc cá nhân`, cat: `Sinh hoạt`, met: 2.0 },
+      { id: `a097`, name: `Đứng ủi / là quần áo`, cat: `Sinh hoạt`, met: 1.8 },
+      { id: `a098`, name: `Cọ rửa nhà tắm / Tổng vệ sinh`, cat: `Sinh hoạt`, met: 3.8 },
+      { id: `a099`, name: `Sửa chữa đồ đạc / DIY`, cat: `Sinh hoạt`, met: 3.0 },
+      { id: `a100`, name: `Hát Karaoke sôi động (đứng hát nhảy)`, cat: `Sinh hoạt`, met: 2.5 }
+    ];
+
+    // =========================================================================
+    // 3. STATE MANAGEMENT & DEFAULTS
+    // =========================================================================
+    function getLocalTodayISO() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, `0`);
+      const d = String(now.getDate()).padStart(2, `0`);
+      return `${y}-${m}-${d}`;
+    }
+
+    function createDefaultState() {
+      const today = getLocalTodayISO();
+      return {
+        activeUserId: `user1`,
+        activeDate: today,
+        profileCollapsed: false,
+        users: {
+          user1: {
+            profile: {
+              name: `Kano`,
+              sex: `female`,
+              age: 24,
+              height: 163,
+              baseWeight: 52,
+              targetWeight: 55,
+              bodyFat: 23.5,
+              targetBodyFat: 21.0,
+              weightGoal: `gain`,
+              compGoal: `muscle`,
+              waterTargetMl: 2200,
+              defaultWorkHours: 8
+            },
+            customFoods: [],
+            logs: {}
+          },
+          user2: {
+            profile: {
+              name: `Người dùng 2`,
+              sex: `male`,
+              age: 26,
+              height: 172,
+              baseWeight: 66,
+              targetWeight: 66,
+              bodyFat: 18.0,
+              targetBodyFat: 15.0,
+              weightGoal: `maintain`,
+              compGoal: `recomp`,
+              waterTargetMl: 2400,
+              defaultWorkHours: 8
+            },
+            customFoods: [],
+            logs: {}
+          }
+        }
+      };
+    }
+
+    let appState = createDefaultState();
+    let selectedFoodCat = `Tất cả`;
+    let selectedFoodId = `f15`;
+    let selectedActCat = `Tất cả`;
+    let selectedActId = `a001`;
+    let toastTimer = null;
+
+    // =========================================================================
+    // 4. PIXEL ART SVG HELPERS (Using CSS custom properties, no inline hex)
+    // =========================================================================
+    function renderAvatarSvg(userId) {
+      if (userId === `user1`) {
+        return `<svg width="38" height="38" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">
+          <rect x="3" y="2" width="2" height="4" style="fill: var(--primary);" />
+          <rect x="11" y="2" width="2" height="4" style="fill: var(--primary);" />
+          <rect x="3" y="5" width="10" height="8" style="fill: var(--primary-container);" />
+          <rect x="2" y="6" width="1" height="6" style="fill: var(--outline);" />
+          <rect x="13" y="6" width="1" height="6" style="fill: var(--outline);" />
+          <rect x="3" y="13" width="10" height="1" style="fill: var(--outline);" />
+          <rect x="5" y="8" width="2" height="2" style="fill: var(--on-surface);" />
+          <rect x="9" y="8" width="2" height="2" style="fill: var(--on-surface);" />
+          <rect x="4" y="10" width="2" height="1" style="fill: var(--primary);" />
+          <rect x="10" y="10" width="2" height="1" style="fill: var(--primary);" />
+          <rect x="7" y="10" width="2" height="1" style="fill: var(--on-surface);" />
+        </svg>`;
+      }
+      return `<svg width="38" height="38" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="2" y="3" width="3" height="3" style="fill: var(--secondary);" />
+        <rect x="11" y="3" width="3" height="3" style="fill: var(--secondary);" />
+        <rect x="3" y="5" width="10" height="8" style="fill: var(--secondary-container);" />
+        <rect x="2" y="6" width="1" height="6" style="fill: var(--outline);" />
+        <rect x="13" y="6" width="1" height="6" style="fill: var(--outline);" />
+        <rect x="3" y="13" width="10" height="1" style="fill: var(--outline);" />
+        <rect x="5" y="8" width="2" height="2" style="fill: var(--on-surface);" />
+        <rect x="9" y="8" width="2" height="2" style="fill: var(--on-surface);" />
+        <rect x="7" y="10" width="2" height="2" style="fill: var(--secondary);" />
+      </svg>`;
+    }
+
+    function renderWaterCupSvg(filled) {
+      const fillStyle = filled ? `fill: var(--tertiary);` : `fill: var(--outline-variant);`;
+      return `<svg width="20" height="20" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="2" y="1" width="8" height="1" style="fill: var(--outline);" />
+        <rect x="2" y="2" width="1" height="8" style="fill: var(--outline);" />
+        <rect x="9" y="2" width="1" height="8" style="fill: var(--outline);" />
+        <rect x="3" y="10" width="6" height="1" style="fill: var(--outline);" />
+        <rect x="3" y="4" width="6" height="6" style="${fillStyle}" />
+      </svg>`;
+    }
+
+    // =========================================================================
+    // 5. CORE ACCESSORS & DYNAMIC CALCULATION ENGINE
+    // =========================================================================
+    function getActiveUser() {
+      return appState.users[appState.activeUserId] || appState.users.user1;
+    }
+
+    function getAllFoodsForActiveUser() {
+      const u = getActiveUser();
+      return [...BASE_FOODS, ...(u.customFoods || [])];
+    }
+
+    function getMostRecentLoggedWeight(user, upToDate) {
+      const dates = Object.keys(user.logs || {}).sort();
+      let found = null;
+      for (let i = 0; i < dates.length; i++) {
+        const d = dates[i];
+        if (d <= upToDate && user.logs[d] && typeof user.logs[d].weight === `number` && user.logs[d].weight > 0) {
+          found = user.logs[d].weight;
+        }
+      }
+      return found !== null ? found : user.profile.baseWeight;
+    }
+
+    function getDayLog(dateStr, createIfMissing) {
+      const user = getActiveUser();
+      if (!user.logs[dateStr]) {
+        if (!createIfMissing) {
+          return {
+            weight: getMostRecentLoggedWeight(user, dateStr),
+            weightLogged: false,
+            workHours: user.profile.defaultWorkHours,
+            waterMl: 0,
+            sleepHours: null,
+            sleepQuality: `deep`,
+            foods: [],
+            activities: []
+          };
+        }
+        user.logs[dateStr] = {
+          weight: getMostRecentLoggedWeight(user, dateStr),
+          weightLogged: false,
+          workHours: user.profile.defaultWorkHours,
+          waterMl: 0,
+          sleepHours: null,
+          sleepQuality: `deep`,
+          foods: [],
+          activities: []
+        };
+      }
+      return user.logs[dateStr];
+    }
+
+    function computeUserMetrics(user, dateStr) {
+      const p = user.profile;
+      const day = user.logs[dateStr] || {
+        weight: getMostRecentLoggedWeight(user, dateStr),
+        workHours: p.defaultWorkHours,
+        foods: [],
+        activities: []
+      };
+      const w = (typeof day.weight === `number` && day.weight > 0) ? day.weight : p.baseWeight;
+      const h = p.height || 163;
+      const age = p.age || 24;
+
+      // Mifflin-St Jeor BMR
+      const sexOffset = p.sex === `male` ? 5 : -161;
+      const bmr = Math.round((10 * w) + (6.25 * h) - (5 * age) + sexOffset);
+
+      // Office Work & Baseline Living Adjustment
+      // Baseline daily living (sleep + basic routine): 1.12 * BMR
+      // Office work adds ~0.29 kcal/kg/hour (~15 kcal/h for 52kg -> +120 kcal for 8h -> ~1,529 kcal TDEE)
+      const workHours = typeof day.workHours === `number` ? day.workHours : p.defaultWorkHours;
+      const baseLiving = Math.round(bmr * 1.12);
+      const workBurn = Math.round(workHours * w * 0.29);
+
+      const activityBurn = (day.activities || []).reduce((sum, item) => sum + (item.calories || 0), 0);
+      const tdee = baseLiving + workBurn + activityBurn;
+
+      // Calorie & Macro Targets
+      let calDelta = 0;
+      if (p.weightGoal === `gain`) calDelta = 200; // Lean bulk +150-250 kcal
+      else if (p.weightGoal === `lose`) calDelta = -350;
+
+      if (p.compGoal === `muscle` && p.weightGoal === `maintain`) calDelta += 100;
+      if (p.compGoal === `fatloss` && p.weightGoal === `maintain`) calDelta -= 150;
+
+      const targetCal = Math.max(1150, Math.round(tdee + calDelta));
+
+      // Protein target: 1.6 - 2.0g/kg based on body comp goal
+      let proteinPerKg = 1.8;
+      if (p.compGoal === `recomp`) proteinPerKg = 2.0;
+      else if (p.compGoal === `muscle`) proteinPerKg = 1.85;
+      else if (p.compGoal === `fatloss`) proteinPerKg = 1.9;
+
+      const targetProtein = Math.round(w * proteinPerKg);
+      const targetFat = Math.round((targetCal * 0.26) / 9);
+      const remainingCarbCal = Math.max(200, targetCal - (targetProtein * 4) - (targetFat * 9));
+      const targetCarb = Math.round(remainingCarbCal / 4);
+
+      // Lean Mass & Timeline
+      const bf = p.bodyFat || 23.5;
+      const leanMass = Number((w * (1 - bf / 100)).toFixed(1));
+      const targetBf = p.targetBodyFat || 21.0;
+
+      let timelineText = `Duy trì ổn định`;
+      const weightDiff = Math.abs((p.targetWeight || w) - w);
+      const bfDiff = Math.abs(bf - targetBf);
+
+      if (p.weightGoal === `maintain` && p.compGoal === `recomp`) {
+        const weeks = Math.max(4, Math.round(bfDiff / 0.35));
+        timelineText = `~${weeks} tuần (${weeks * 7} ngày)`;
+      } else if (weightDiff >= 0.3) {
+        const dailyRate = Math.max(150, Math.abs(calDelta));
+        const days = Math.ceil((weightDiff * 7700) / dailyRate);
+        const weeks = Math.max(1, Math.round(days / 7));
+        timelineText = `~${weeks} tuần (${days} ngày)`;
+      } else if (bfDiff >= 0.5) {
+        const weeks = Math.max(3, Math.round(bfDiff / 0.4));
+        timelineText = `~${weeks} tuần (${weeks * 7} ngày)`;
+      }
+
+      // Totals from food log
+      const foodTotals = (day.foods || []).reduce((acc, f) => {
+        acc.cal += f.cal || 0;
+        acc.pro += f.pro || 0;
+        acc.carb += f.carb || 0;
+        acc.fat += f.fat || 0;
+        return acc;
+      }, { cal: 0, pro: 0, carb: 0, fat: 0 });
+
+      return {
+        weight: w,
+        bmr,
+        workHours,
+        workBurn,
+        activityBurn,
+        tdee,
+        targetCal,
+        targetProtein,
+        targetFat,
+        targetCarb,
+        leanMass,
+        targetBf,
+        timelineText,
+        foodTotals
+      };
+    }
+
+    // =========================================================================
+    // 6. PERSISTENCE VIA NOTEBOOK APP API SHIM
+    // =========================================================================
+    async function persistState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+          await window.notebookAppApi.setAppState(appState);
+        }
+      } catch (err) {
+        // Keep UI responsive even if host storage throttles
+      }
+    }
+
+    function showToast(message) {
+      const el = document.getElementById(`global-toast`);
+      if (!el) return;
+      el.textContent = message;
+      el.classList.add(`is-visible`);
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        const t = document.getElementById(`global-toast`);
+        if (t) t.classList.remove(`is-visible`);
+      }, 3200);
+    }
+
+    // =========================================================================
+    // 7. EVENT HANDLERS (HOISTED FUNCTIONS)
+    // =========================================================================
+    function switchUser(userId) {
+      if (!appState.users[userId]) return;
+      appState.activeUserId = userId;
+      renderAll();
+      persistState();
+    }
+
+    function setActiveDate(dateStr) {
+      if (!dateStr) return;
+      appState.activeDate = dateStr;
+      renderAll();
+      persistState();
+    }
+
+    function shiftDate(deltaDays) {
+      const parts = appState.activeDate.split(`-`).map(Number);
+      const dt = new Date(parts[0], parts[1] - 1, parts[2]);
+      dt.setDate(dt.getDate() + deltaDays);
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth() + 1).padStart(2, `0`);
+      const d = String(dt.getDate()).padStart(2, `0`);
+      setActiveDate(`${y}-${m}-${d}`);
+    }
+
+    function goToday() {
+      setActiveDate(getLocalTodayISO());
+    }
+
+    function toggleProfileSection() {
+      appState.profileCollapsed = !appState.profileCollapsed;
+      renderProfileCollapse();
+      persistState();
+    }
+
+    function updateProfileField(field, value) {
+      const user = getActiveUser();
+      if (field === `name`) {
+        user.profile.name = (value || ``).trim() || (appState.activeUserId === `user1` ? `Kano` : `Người dùng 2`);
+      } else if (typeof value === `number` && !Number.isNaN(value)) {
+        user.profile[field] = value;
+      } else if (typeof value === `string`) {
+        user.profile[field] = value;
+      }
+      renderKPIs();
+      renderProfileSummary();
+      renderCharts();
+      persistState();
+    }
+
+    function setWeightGoal(goal) {
+      const user = getActiveUser();
+      user.profile.weightGoal = goal;
+      renderAll();
+      persistState();
+    }
+
+    function setCompGoal(goal) {
+      const user = getActiveUser();
+      user.profile.compGoal = goal;
+      renderAll();
+      persistState();
+    }
+
+    function setWorkSchedule(hours) {
+      const safeHours = Math.max(0, Math.min(16, Number(hours) || 0));
+      const day = getDayLog(appState.activeDate, true);
+      day.workHours = safeHours;
+      renderAll();
+      persistState();
+    }
+
+    function updateTodayWeight(val) {
+      const num = Number(val);
+      if (Number.isNaN(num) || num < 25 || num > 250) return;
+      const day = getDayLog(appState.activeDate, true);
+      day.weight = Number(num.toFixed(1));
+      day.weightLogged = true;
+      renderAll();
+      persistState();
+      showToast(`Đã cập nhật cân nặng ngày ${appState.activeDate}: ${day.weight} kg`);
+    }
+
+    function nudgeTodayWeight(delta) {
+      const day = getDayLog(appState.activeDate, true);
+      const next = Math.max(25, Math.min(250, Number(((day.weight || getActiveUser().profile.baseWeight) + delta).toFixed(1))));
+      day.weight = next;
+      day.weightLogged = true;
+      renderAll();
+      persistState();
+    }
+
+    function setWaterCups(cupCount) {
+      const user = getActiveUser();
+      const cupSize = Math.round((user.profile.waterTargetMl || 2200) / 8);
+      const day = getDayLog(appState.activeDate, true);
+      const currentCups = Math.round((day.waterMl || 0) / cupSize);
+      const nextCups = currentCups === cupCount ? Math.max(0, cupCount - 1) : cupCount;
+      day.waterMl = nextCups * cupSize;
+      renderWaterSection();
+      renderHistoryTable();
+      persistState();
+    }
+
+    function addWater(mlDelta) {
+      const day = getDayLog(appState.activeDate, true);
+      day.waterMl = Math.max(0, Math.min(6000, (day.waterMl || 0) + mlDelta));
+      renderWaterSection();
+      renderHistoryTable();
+      persistState();
+    }
+
+    function updateSleep(hoursVal, qualityVal) {
+      const day = getDayLog(appState.activeDate, true);
+      if (hoursVal !== null && hoursVal !== ``) {
+        const h = Math.max(0, Math.min(16, Number(hoursVal)));
+        if (!Number.isNaN(h)) day.sleepHours = h;
+      }
+      if (qualityVal !== null) {
+        day.sleepQuality = qualityVal;
+      }
+      renderSleepSection();
+      renderHistoryTable();
+      persistState();
+    }
+
+    function selectFoodCategory(cat) {
+      selectedFoodCat = cat;
+      renderFoodCatalog();
+    }
+
+    function selectFoodItem(foodId) {
+      selectedFoodId = foodId;
+      renderFoodCatalog();
+      updateFoodPreview();
+    }
+
+    function setFoodQty(qty) {
+      const inp = document.getElementById(`food-qty-input`);
+      if (inp) inp.value = qty;
+      updateFoodPreview();
+    }
+
+    function updateFoodPreview() {
+      const foods = getAllFoodsForActiveUser();
+      const food = foods.find((f) => f.id === selectedFoodId) || foods[0];
+      const qtyInput = document.getElementById(`food-qty-input`);
+      const qty = Math.max(0.1, Number(qtyInput ? qtyInput.value : 1) || 1);
+
+      const titleEl = document.getElementById(`selected-food-title`);
+      const unitEl = document.getElementById(`selected-food-unit-badge`);
+      const macroEl = document.getElementById(`food-preview-macros`);
+      if (!food) return;
+
+      if (titleEl) titleEl.textContent = food.name;
+      if (unitEl) unitEl.textContent = `Đơn vị: ${food.unit}`;
+      if (macroEl) {
+        const c = Math.round(food.cal * qty);
+        const p = (food.pro * qty).toFixed(1);
+        const cb = (food.carb * qty).toFixed(1);
+        const ft = (food.fat * qty).toFixed(1);
+        macroEl.textContent = `${c} kcal · P: ${p}g · C: ${cb}g · F: ${ft}g`;
+      }
+    }
+
+    function addSelectedFoodToLog() {
+      const foods = getAllFoodsForActiveUser();
+      const food = foods.find((f) => f.id === selectedFoodId);
+      if (!food) return;
+
+      const qtyInput = document.getElementById(`food-qty-input`);
+      const mealSelect = document.getElementById(`food-meal-select`);
+      const qty = Math.max(0.1, Number(qtyInput ? qtyInput.value : 1) || 1);
+      const meal = mealSelect ? mealSelect.value : `Bữa trưa`;
+
+      const day = getDayLog(appState.activeDate, true);
+      day.foods.push({
+        entryId: `fe_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        name: food.name,
+        meal,
+        qty,
+        unit: food.unit,
+        cal: Math.round(food.cal * qty),
+        pro: Number((food.pro * qty).toFixed(1)),
+        carb: Number((food.carb * qty).toFixed(1)),
+        fat: Number((food.fat * qty).toFixed(1))
+      });
+
+      renderAll();
+      persistState();
+      showToast(`Đã thêm ${qty} × ${food.name} (${Math.round(food.cal * qty)} kcal)`);
+    }
+
+    function deleteFoodEntry(entryId) {
+      const day = getDayLog(appState.activeDate, true);
+      day.foods = (day.foods || []).filter((f) => f.entryId !== entryId);
+      renderAll();
+      persistState();
+    }
+
+    function toggleCustomFoodForm() {
+      const panel = document.getElementById(`custom-food-panel`);
+      if (panel) panel.classList.toggle(`is-hidden`);
+    }
+
+    function saveCustomFood() {
+      const nameEl = document.getElementById(`cf-name`);
+      const unitEl = document.getElementById(`cf-unit`);
+      const calEl = document.getElementById(`cf-cal`);
+      const proEl = document.getElementById(`cf-pro`);
+      const carbEl = document.getElementById(`cf-carb`);
+      const fatEl = document.getElementById(`cf-fat`);
+
+      const name = (nameEl ? nameEl.value : ``).trim();
+      if (!name) {
+        showToast(`Vui lòng nhập tên món ăn trước khi lưu.`);
+        return;
+      }
+
+      const newFood = {
+        id: `cf_${Date.now()}`,
+        name,
+        unit: (unitEl && unitEl.value.trim()) || `1 phần`,
+        cat: `Món tự tạo`,
+        cal: Math.max(0, Number(calEl ? calEl.value : 0) || 0),
+        pro: Math.max(0, Number(proEl ? proEl.value : 0) || 0),
+        carb: Math.max(0, Number(carbEl ? carbEl.value : 0) || 0),
+        fat: Math.max(0, Number(fatEl ? fatEl.value : 0) || 0)
+      };
+
+      const user = getActiveUser();
+      user.customFoods = user.customFoods || [];
+      user.customFoods.push(newFood);
+      selectedFoodCat = `Món tự tạo`;
+      selectedFoodId = newFood.id;
+      if (nameEl) nameEl.value = ``;
+      toggleCustomFoodForm();
+      renderFoodCatalog();
+      updateFoodPreview();
+      persistState();
+      showToast(`Đã lưu món tự tạo: ${newFood.name}`);
+    }
+
+    function selectActCategory(cat) {
+      selectedActCat = cat;
+      renderActivityCatalog();
+    }
+
+    function selectActivityItem(actId) {
+      selectedActId = actId;
+      renderActivityCatalog();
+      updateActivityPreview();
+    }
+
+    function setActivityMinutes(mins) {
+      const inp = document.getElementById(`act-minutes-input`);
+      if (inp) inp.value = mins;
+      updateActivityPreview();
+    }
+
+    function updateActivityPreview() {
+      const act = ACTIVITIES_100.find((a) => a.id === selectedActId) || ACTIVITIES_100[0];
+      const minsInp = document.getElementById(`act-minutes-input`);
+      const mins = Math.max(1, Number(minsInp ? minsInp.value : 60) || 60);
+      const user = getActiveUser();
+      const metrics = computeUserMetrics(user, appState.activeDate);
+      const burn = Math.round(act.met * metrics.weight * (mins / 60));
+
+      const titleEl = document.getElementById(`selected-act-title`);
+      const metEl = document.getElementById(`selected-act-met-badge`);
+      const prevEl = document.getElementById(`act-burn-preview`);
+
+      if (titleEl) titleEl.textContent = act.name;
+      if (metEl) metEl.textContent = `MET: ${act.met}`;
+      if (prevEl) prevEl.textContent = `${burn} kcal`;
+    }
+
+    function addSelectedActivityToLog() {
+      const act = ACTIVITIES_100.find((a) => a.id === selectedActId);
+      if (!act) return;
+      const minsInp = document.getElementById(`act-minutes-input`);
+      const mins = Math.max(1, Number(minsInp ? minsInp.value : 60) || 60);
+      const user = getActiveUser();
+      const metrics = computeUserMetrics(user, appState.activeDate);
+      const burn = Math.round(act.met * metrics.weight * (mins / 60));
+
+      const day = getDayLog(appState.activeDate, true);
+      day.activities.push({
+        entryId: `ae_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        name: act.name,
+        met: act.met,
+        minutes: mins,
+        calories: burn
+      });
+
+      renderAll();
+      persistState();
+      showToast(`Đã ghi nhận ${act.name} (${mins} phút · -${burn} kcal)`);
+    }
+
+    function deleteActivityEntry(entryId) {
+      const day = getDayLog(appState.activeDate, true);
+      day.activities = (day.activities || []).filter((a) => a.entryId !== entryId);
+      renderAll();
+      persistState();
+    }
+
+    function loadSampleDayPreset() {
+      const day = getDayLog(appState.activeDate, true);
+      day.foods = [
+        { entryId: `p1`, name: `Phở gà`, meal: `Bữa sáng`, qty: 1, unit: `1 tô`, cal: 380, pro: 22.0, carb: 52.0, fat: 11.0 },
+        { entryId: `p2`, name: `Cơm trắng`, meal: `Bữa trưa`, qty: 1, unit: `1 bát (150g)`, cal: 200, pro: 4.6, carb: 44.2, fat: 0.6 },
+        { entryId: `p3`, name: `Ức gà luộc / áp chảo`, meal: `Bữa trưa`, qty: 1.5, unit: `100g`, cal: 248, pro: 46.5, carb: 0.0, fat: 5.4 },
+        { entryId: `p4`, name: `Rau luộc / Dưa chua`, meal: `Bữa trưa`, qty: 1, unit: `1 đĩa (150g)`, cal: 25, pro: 1.0, carb: 5.0, fat: 0.2 },
+        { entryId: `p5`, name: `Trứng gà luộc / ốp la`, meal: `Bữa phụ`, qty: 2, unit: `1 quả lớn`, cal: 156, pro: 12.6, carb: 1.2, fat: 10.6 },
+        { entryId: `p6`, name: `Cơm trắng`, meal: `Bữa tối`, qty: 1, unit: `1 bát (150g)`, cal: 200, pro: 4.6, carb: 44.2, fat: 0.6 },
+        { entryId: `p7`, name: `Cá sốt cà chua`, meal: `Bữa tối`, qty: 1, unit: `1 khúc (120g)`, cal: 180, pro: 18.0, carb: 4.0, fat: 8.0 }
+      ];
+      day.activities = [
+        { entryId: `pa1`, name: `Cầu lông (đánh phong trào)`, met: 6.7, minutes: 60, calories: Math.round(6.7 * day.weight) }
+      ];
+      day.waterMl = 1650;
+      day.sleepHours = 7.5;
+      day.sleepQuality = `deep`;
+      renderAll();
+      persistState();
+      showToast(`Đã nạp thực đơn gợi ý tăng cơ (~1,389 kcal, 109g Đạm) & 1 giờ cầu lông!`);
+    }
+
+    function exportToExcelCSV() {
+      const rows = [
+        [`Hồ sơ`, `Ngày`, `Cân nặng (kg)`, `Giờ văn phòng`, `BMR (kcal)`, `TDEE (kcal)`, `Calo Mục tiêu`, `Calo Nạp`, `Đạm (g)`, `Tinh bột (g)`, `Chất béo (g)`, `Nước (ml)`, `Giấc ngủ (giờ)`, `Calo Vận động`, `Chi tiết món ăn`, `Chi tiết vận động`]
+      ];
+
+      const userKeys = [`user1`, `user2`];
+      for (let uIdx = 0; uIdx < userKeys.length; uIdx++) {
+        const uid = userKeys[uIdx];
+        const user = appState.users[uid];
+        const dates = Object.keys(user.logs || {}).sort();
+        if (dates.length === 0) {
+          const m = computeUserMetrics(user, appState.activeDate);
+          rows.push([
+            user.profile.name, appState.activeDate, m.weight, m.workHours, m.bmr, m.tdee, m.targetCal,
+            0, 0, 0, 0, 0, ``, 0, `Chưa có nhật ký`, ``
+          ]);
+        } else {
+          for (let i = 0; i < dates.length; i++) {
+            const d = dates[i];
+            const log = user.logs[d];
+            const m = computeUserMetrics(user, d);
+            const foodStr = (log.foods || []).map((f) => `${f.meal}: ${f.name} x${f.qty} (${f.cal}kcal)`).join(` | `);
+            const actStr = (log.activities || []).map((a) => `${a.name} ${a.minutes}p (-${a.calories}kcal)`).join(` | `);
+            rows.push([
+              user.profile.name, d, m.weight, m.workHours, m.bmr, m.tdee, m.targetCal,
+              Math.round(m.foodTotals.cal), m.foodTotals.pro.toFixed(1), m.foodTotals.carb.toFixed(1), m.foodTotals.fat.toFixed(1),
+              log.waterMl || 0, log.sleepHours !== null ? log.sleepHours : ``, m.activityBurn, foodStr, actStr
+            ]);
+          }
+        }
+      }
+
+      const csvContent = `\uFEFF` + rows.map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, `""`)}"`).join(`,`)
+      ).join(`\n`);
+
+      const filename = `Theo-doi-Kano-${getLocalTodayISO()}.csv`;
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+        window.notebookAppApi.triggerFileDownload({
+          content: csvContent,
+          contentType: `text/csv`,
+          encoding: `UTF-8`,
+          filename
+        });
+      } else {
+        const blob = new Blob([csvContent], { type: `text/csv;charset=utf-8;` });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement(`a`);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      showToast(`Đã xuất tệp ${filename} tương thích Excel!`);
+    }
+
+    // =========================================================================
+    // 8. RENDERING PIPELINE
+    // =========================================================================
+    function renderHeader() {
+      const u1Name = appState.users.user1.profile.name || `Kano`;
+      const u2Name = appState.users.user2.profile.name || `Người dùng 2`;
+
+      const t1 = document.getElementById(`tab-user-1`);
+      const t2 = document.getElementById(`tab-user-2`);
+      const n1 = document.getElementById(`tab-name-user1`);
+      const n2 = document.getElementById(`tab-name-user2`);
+      const avatar = document.getElementById(`header-avatar`);
+      const dateInp = document.getElementById(`active-date-input`);
+
+      if (n1) n1.textContent = u1Name;
+      if (n2) n2.textContent = u2Name;
+      if (t1) {
+        t1.classList.toggle(`is-active`, appState.activeUserId === `user1`);
+        t1.setAttribute(`aria-selected`, String(appState.activeUserId === `user1`));
+      }
+      if (t2) {
+        t2.classList.toggle(`is-active`, appState.activeUserId === `user2`);
+        t2.setAttribute(`aria-selected`, String(appState.activeUserId === `user2`));
+      }
+      if (avatar) avatar.innerHTML = renderAvatarSvg(appState.activeUserId);
+      if (dateInp) dateInp.value = appState.activeDate;
+    }
+
+    function renderKPIs() {
+      const user = getActiveUser();
+      const m = computeUserMetrics(user, appState.activeDate);
+
+      const calIn = Math.round(m.foodTotals.cal);
+      const calPct = Math.min(100, Math.round((calIn / m.targetCal) * 100));
+      const calDiff = m.targetCal - calIn;
+
+      const elCalIn = document.getElementById(`kpi-cal-in`);
+      const elCalTarget = document.getElementById(`kpi-cal-target`);
+      const elCalBar = document.getElementById(`kpi-cal-bar`);
+      const elCalBadge = document.getElementById(`kpi-cal-badge`);
+      const elCalNote = document.getElementById(`kpi-cal-note`);
+
+      if (elCalIn) elCalIn.textContent = calIn;
+      if (elCalTarget) elCalTarget.textContent = m.targetCal;
+      if (elCalBar) elCalBar.style.width = `${calPct}%`;
+      if (elCalBadge) {
+        if (calIn === 0) {
+          elCalBadge.textContent = `Chưa nhập`;
+          elCalBadge.dataset.tone = `warn`;
+        } else if (Math.abs(calDiff) <= 150) {
+          elCalBadge.textContent = `Đạt chuẩn`;
+          elCalBadge.dataset.tone = `ok`;
+        } else if (calDiff > 0) {
+          elCalBadge.textContent = `${calPct}%`;
+          elCalBadge.dataset.tone = ``;
+        } else {
+          elCalBadge.textContent = `Vượt +${Math.abs(calDiff)}`;
+          elCalBadge.dataset.tone = `alert`;
+        }
+      }
+      if (elCalNote) {
+        elCalNote.textContent = calDiff >= 0
+          ? `Còn lại ${calDiff.toLocaleString(`vi-VN`)} kcal để đạt mục tiêu.`
+          : `Đã nạp dư ${Math.abs(calDiff).toLocaleString(`vi-VN`)} kcal so với mục tiêu.`;
+      }
+
+      // Protein & Macro
+      const proIn = Number(m.foodTotals.pro.toFixed(1));
+      const proPct = Math.min(100, Math.round((proIn / m.targetProtein) * 100));
+      const elProIn = document.getElementById(`kpi-pro-in`);
+      const elProTarget = document.getElementById(`kpi-pro-target`);
+      const elProBar = document.getElementById(`kpi-pro-bar`);
+      const elProBadge = document.getElementById(`kpi-pro-badge`);
+      const elMacroNote = document.getElementById(`kpi-macro-note`);
+
+      if (elProIn) elProIn.textContent = proIn;
+      if (elProTarget) elProTarget.textContent = m.targetProtein;
+      if (elProBar) elProBar.style.width = `${proPct}%`;
+      if (elProBadge) elProBadge.textContent = `${proPct}%`;
+      if (elMacroNote) {
+        elMacroNote.textContent = `Carb: ${Math.round(m.foodTotals.carb)}/${m.targetCarb}g · Fat: ${Math.round(m.foodTotals.fat)}/${m.targetFat}g`;
+      }
+
+      // TDEE & BMR
+      const elTdee = document.getElementById(`kpi-tdee`);
+      const elWorkBadge = document.getElementById(`kpi-work-badge`);
+      const elBmrNote = document.getElementById(`kpi-bmr-note`);
+      const elBalNote = document.getElementById(`kpi-balance-note`);
+
+      if (elTdee) elTdee.textContent = m.tdee;
+      if (elWorkBadge) elWorkBadge.textContent = m.workHours > 0 ? `VP ${m.workHours}h` : `Nghỉ VP`;
+      if (elBmrNote) elBmrNote.textContent = `BMR: ${m.bmr} · VP: +${m.workBurn} · Tập: +${m.activityBurn}`;
+      const net = calIn - m.tdee;
+      if (elBalNote) elBalNote.textContent = `Chênh lệch thực tế: ${net >= 0 ? `+` : ``}${net} kcal`;
+
+      // Weight & Lean Mass
+      const elWeightInp = document.getElementById(`today-weight-input`);
+      const elTimelineBadge = document.getElementById(`kpi-timeline-badge`);
+      const elLeanNote = document.getElementById(`kpi-lean-note`);
+
+      if (elWeightInp) elWeightInp.value = m.weight;
+      if (elTimelineBadge) elTimelineBadge.textContent = m.timelineText;
+      if (elLeanNote) elLeanNote.textContent = `Cơ nạc: ${m.leanMass} kg · Mỡ mục tiêu: ${m.targetBf}%`;
+    }
+
+    function renderProfileCollapse() {
+      const body = document.getElementById(`profile-body`);
+      const btn = document.getElementById(`toggle-profile-btn`);
+      if (body) body.classList.toggle(`is-hidden`, !!appState.profileCollapsed);
+      if (btn) btn.textContent = appState.profileCollapsed ? `Mở rộng` : `Thu gọn`;
+    }
+
+    function renderProfileSummary() {
+      const user = getActiveUser();
+      const p = user.profile;
+      const m = computeUserMetrics(user, appState.activeDate);
+
+      const mapInputs = {
+        'prof-name': p.name,
+        'prof-sex': p.sex,
+        'prof-age': p.age,
+        'prof-height': p.height,
+        'prof-base-weight': p.baseWeight,
+        'prof-target-weight': p.targetWeight,
+        'prof-bodyfat': p.bodyFat,
+        'prof-target-bf': p.targetBodyFat,
+        'work-hours-custom': m.workHours
+      };
+      for (const id in mapInputs) {
+        const el = document.getElementById(id);
+        if (el && document.activeElement !== el) {
+          el.value = mapInputs[id];
+        }
+      }
+
+      // Goal buttons
+      const wgMap = { gain: `goal-w-gain`, maintain: `goal-w-maintain`, lose: `goal-w-lose` };
+      for (const k in wgMap) {
+        const b = document.getElementById(wgMap[k]);
+        if (b) b.classList.toggle(`is-active`, p.weightGoal === k);
+      }
+      const cgMap = { recomp: `goal-c-recomp`, muscle: `goal-c-muscle`, fatloss: `goal-c-fatloss` };
+      for (const k in cgMap) {
+        const b = document.getElementById(cgMap[k]);
+        if (b) b.classList.toggle(`is-active`, p.compGoal === k);
+      }
+
+      // Work preset chips
+      const w8 = document.getElementById(`work-btn-8`);
+      const w4 = document.getElementById(`work-btn-4`);
+      const w0 = document.getElementById(`work-btn-0`);
+      if (w8) w8.classList.toggle(`is-active`, m.workHours === 8);
+      if (w4) w4.classList.toggle(`is-active`, m.workHours === 4);
+      if (w0) w0.classList.toggle(`is-active`, m.workHours === 0);
+
+      const workPrev = document.getElementById(`work-kcal-preview`);
+      if (workPrev) workPrev.textContent = `+${m.workBurn} kcal sinh hoạt VP (${m.workHours}h)`;
+
+      // Live calc readouts
+      const setTxt = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+      setTxt(`calc-bmr`, `${m.bmr.toLocaleString(`vi-VN`)} kcal`);
+      setTxt(`calc-tdee`, `${m.tdee.toLocaleString(`vi-VN`)} kcal`);
+      setTxt(`calc-target-cal`, `${m.targetCal.toLocaleString(`vi-VN`)} kcal`);
+      setTxt(`calc-lean-mass`, `${m.leanMass} kg`);
+      setTxt(`calc-macros`, `${m.targetProtein}g / ${m.targetCarb}g / ${m.targetFat}g`);
+      setTxt(`calc-timeline`, m.timelineText);
+    }
+
+    function renderWaterSection() {
+      const user = getActiveUser();
+      const targetMl = user.profile.waterTargetMl || 2200;
+      const cupSize = Math.round(targetMl / 8);
+      const day = getDayLog(appState.activeDate, false);
+      const waterMl = day.waterMl || 0;
+      const filledCups = Math.min(8, Math.floor(waterMl / cupSize));
+      const pct = Math.min(100, Math.round((waterMl / targetMl) * 100));
+
+      const targetLbl = document.getElementById(`water-target-label`);
+      const badge = document.getElementById(`water-status-badge`);
+      const cupsGrid = document.getElementById(`water-cups-grid`);
+      const barFill = document.getElementById(`water-bar-fill`);
+      const mlReadout = document.getElementById(`water-ml-readout`);
+      const pctReadout = document.getElementById(`water-pct-readout`);
+
+      if (targetLbl) targetLbl.textContent = `${targetMl.toLocaleString(`vi-VN`)} ml`;
+      if (badge) {
+        badge.textContent = `${filledCups} / 8 ly`;
+        badge.dataset.tone = pct >= 100 ? `ok` : `cyan`;
+      }
+      if (barFill) barFill.style.width = `${pct}%`;
+      if (mlReadout) mlReadout.textContent = `${waterMl.toLocaleString(`vi-VN`)} / ${targetMl.toLocaleString(`vi-VN`)} ml`;
+      if (pctReadout) pctReadout.textContent = `${pct}%`;
+
+      if (cupsGrid) {
+        let html = ``;
+        for (let i = 1; i <= 8; i++) {
+          const isFilled = i <= filledCups;
+          html += `<button type="button" class="cup-btn ${isFilled ? `is-filled` : ``}" onclick="setWaterCups(${i})" aria-label="Ly nước thứ ${i}">
+            ${renderWaterCupSvg(isFilled)}
+            <span class="tabular-num" style="font-size:0.7rem;">${i}</span>
+          </button>`;
+        }
+        cupsGrid.innerHTML = html;
+      }
+    }
+
+    function renderSleepSection() {
+      const day = getDayLog(appState.activeDate, false);
+      const hrs = day.sleepHours;
+      const qual = day.sleepQuality || `deep`;
+
+      const inp = document.getElementById(`sleep-hours-input`);
+      const sel = document.getElementById(`sleep-quality-select`);
+      const badge = document.getElementById(`sleep-status-badge`);
+      const note = document.getElementById(`sleep-recovery-note`);
+
+      if (inp && document.activeElement !== inp) inp.value = hrs !== null ? hrs : ``;
+      if (sel) sel.value = qual;
+
+      if (hrs === null || hrs === undefined) {
+        if (badge) {
+          badge.textContent = `Chưa ghi`;
+          badge.dataset.tone = ``;
+        }
+        if (note) note.textContent = `Nhập số giờ ngủ đêm qua để xem đánh giá phục hồi.`;
+        return;
+      }
+
+      if (hrs < 6) {
+        if (badge) { badge.textContent = `${hrs}h · Thiếu ngủ`; badge.dataset.tone = `alert`; }
+        if (note) note.textContent = `Ngủ dưới 6 giờ làm giảm hormone phục hồi cơ. Hãy ngủ bù sớm tối nay!`;
+      } else if (hrs < 7) {
+        if (badge) { badge.textContent = `${hrs}h · Tạm ổn`; badge.dataset.tone = `warn`; }
+        if (note) note.textContent = `Gần đạt ngưỡng lý tưởng (7–8h). Nên thêm 30–60 phút để tối ưu tổng hợp đạm.`;
+      } else if (hrs <= 9) {
+        if (badge) { badge.textContent = `${hrs}h · Tối ưu`; badge.dataset.tone = `ok`; }
+        if (note) note.textContent = `Giấc ngủ lý tưởng cho phục hồi cơ bắp, cân bằng năng lượng và giảm stress.`;
+      } else {
+        if (badge) { badge.textContent = `${hrs}h · Ngủ nhiều`; badge.dataset.tone = `warn`; }
+        if (note) note.textContent = `Thời lượng ngủ khá dài; chú ý giữ nhịp thức dậy đều đặn.`;
+      }
+    }
+
+    function renderFoodCatalog() {
+      const chipsEl = document.getElementById(`food-category-chips`);
+      const listEl = document.getElementById(`food-catalog-list`);
+      const searchEl = document.getElementById(`food-search-input`);
+      const query = (searchEl ? searchEl.value : ``).trim().toLowerCase();
+
+      if (chipsEl) {
+        chipsEl.innerHTML = FOOD_CATEGORIES.map((cat) =>
+          `<button type="button" class="filter-chip ${selectedFoodCat === cat ? `is-active` : ``}" onclick="selectFoodCategory('${cat}')">${cat}</button>`
+        ).join(``);
+      }
+
+      const allFoods = getAllFoodsForActiveUser();
+      const filtered = allFoods.filter((f) => {
+        const matchCat = selectedFoodCat === `Tất cả` || f.cat === selectedFoodCat;
+        const matchQ = !query || f.name.toLowerCase().includes(query) || f.cat.toLowerCase().includes(query);
+        return matchCat && matchQ;
+      });
+
+      if (listEl) {
+        if (filtered.length === 0) {
+          listEl.innerHTML = `<div class="empty-box">Không tìm thấy món phù hợp. Bạn có thể bấm "+ Tự thêm món".</div>`;
+        } else {
+          listEl.innerHTML = filtered.map((f) =>
+            `<button type="button" class="catalog-item ${selectedFoodId === f.id ? `is-selected` : ``}" onclick="selectFoodItem('${f.id}')" role="option" aria-selected="${selectedFoodId === f.id}">
+              <span><strong>${f.name}</strong> <span class="muted-note">(${f.unit})</span></span>
+              <span class="tabular-num">${f.cal} kcal · ${f.pro}g P</span>
+            </button>`
+          ).join(``);
+        }
+      }
+      updateFoodPreview();
+    }
+
+    function renderFoodLog() {
+      const day = getDayLog(appState.activeDate, false);
+      const foods = day.foods || [];
+      const container = document.getElementById(`food-log-container`);
+      const totalLbl = document.getElementById(`food-log-total`);
+
+      const sumCal = foods.reduce((s, f) => s + (f.cal || 0), 0);
+      if (totalLbl) totalLbl.textContent = `${foods.length} món · ${sumCal} kcal`;
+
+      if (!container) return;
+      if (foods.length === 0) {
+        container.innerHTML = `<div class="empty-box">Chưa có món ăn nào cho ngày ${appState.activeDate}. Hãy chọn món ở trên hoặc bấm "Nạp thực đơn gợi ý".</div>`;
+        return;
+      }
+
+      const rowsHtml = foods.map((f) => `
+        <tr>
+          <td><span class="pixel-badge">${f.meal}</span></td>
+          <td><strong>${f.name}</strong><br><span class="muted-note" style="font-size:0.78rem;">${f.qty} × ${f.unit}</span></td>
+          <td class="tabular-num">${f.cal}</td>
+          <td class="tabular-num">${f.pro}g</td>
+          <td class="tabular-num">${f.carb}g / ${f.fat}g</td>
+          <td><button type="button" class="btn btn-danger btn-sm" aria-label="Xóa ${f.name}" onclick="deleteFoodEntry('${f.entryId}')">Xóa</button></td>
+        </tr>
+      `).join(``);
+
+      container.innerHTML = `
+        <div class="pixel-table-wrap">
+          <table class="pixel-table">
+            <thead>
+              <tr>
+                <th>Bữa</th>
+                <th>Món ăn</th>
+                <th>Kcal</th>
+                <th>Đạm</th>
+                <th>C / F</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderActivityCatalog() {
+      const chipsEl = document.getElementById(`act-category-chips`);
+      const listEl = document.getElementById(`act-catalog-list`);
+      const searchEl = document.getElementById(`act-search-input`);
+      const query = (searchEl ? searchEl.value : ``).trim().toLowerCase();
+
+      if (chipsEl) {
+        chipsEl.innerHTML = ACT_CATEGORIES.map((cat) =>
+          `<button type="button" class="filter-chip ${selectedActCat === cat ? `is-active` : ``}" onclick="selectActCategory('${cat}')">${cat}</button>`
+        ).join(``);
+      }
+
+      const user = getActiveUser();
+      const metrics = computeUserMetrics(user, appState.activeDate);
+
+      const filtered = ACTIVITIES_100.filter((a) => {
+        const matchCat = selectedActCat === `Tất cả` || a.cat === selectedActCat;
+        const matchQ = !query || a.name.toLowerCase().includes(query) || a.cat.toLowerCase().includes(query);
+        return matchCat && matchQ;
+      });
+
+      if (listEl) {
+        if (filtered.length === 0) {
+          listEl.innerHTML = `<div class="empty-box">Không tìm thấy hoạt động khớp từ khóa.</div>`;
+        } else {
+          listEl.innerHTML = filtered.map((a) => {
+            const est60 = Math.round(a.met * metrics.weight);
+            return `<button type="button" class="catalog-item ${selectedActId === a.id ? `is-selected` : ``}" onclick="selectActivityItem('${a.id}')" role="option" aria-selected="${selectedActId === a.id}">
+              <span><strong>${a.name}</strong> <span class="muted-note">(${a.cat})</span></span>
+              <span class="tabular-num">~${est60} kcal/h</span>
+            </button>`;
+          }).join(``);
+        }
+      }
+      updateActivityPreview();
+    }
+
+    function renderActivityLog() {
+      const day = getDayLog(appState.activeDate, false);
+      const acts = day.activities || [];
+      const container = document.getElementById(`act-log-container`);
+      const totalLbl = document.getElementById(`act-log-total`);
+
+      const totalMin = acts.reduce((s, a) => s + (a.minutes || 0), 0);
+      const totalBurn = acts.reduce((s, a) => s + (a.calories || 0), 0);
+      if (totalLbl) totalLbl.textContent = `${totalMin} phút · -${totalBurn} kcal`;
+
+      if (!container) return;
+      if (acts.length === 0) {
+        container.innerHTML = `<div class="empty-box">Chưa ghi nhận hoạt động thể chất nào hôm nay. Chọn môn từ kho 100 hoạt động phía trên.</div>`;
+        return;
+      }
+
+      const rowsHtml = acts.map((a) => `
+        <tr>
+          <td><strong>${a.name}</strong><br><span class="muted-note" style="font-size:0.78rem;">MET ${a.met}</span></td>
+          <td class="tabular-num">${a.minutes} phút</td>
+          <td class="tabular-num">-${a.calories} kcal</td>
+          <td><button type="button" class="btn btn-danger btn-sm" aria-label="Xóa ${a.name}" onclick="deleteActivityEntry('${a.entryId}')">Xóa</button></td>
+        </tr>
+      `).join(``);
+
+      container.innerHTML = `
+        <div class="pixel-table-wrap">
+          <table class="pixel-table">
+            <thead>
+              <tr>
+                <th>Hoạt động</th>
+                <th>Thời lượng</th>
+                <th>Tiêu hao</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderCharts() {
+      const user = getActiveUser();
+      const parts = appState.activeDate.split(`-`).map(Number);
+      const anchor = new Date(parts[0], parts[1] - 1, parts[2]);
+
+      const windowDays = [];
+      for (let offset = -6; offset <= 0; offset++) {
+        const dt = new Date(anchor.getTime());
+        dt.setDate(dt.getDate() + offset);
+        const iso = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, `0`)}-${String(dt.getDate()).padStart(2, `0`)}`;
+        const shortLbl = `${String(dt.getDate()).padStart(2, `0`)}/${String(dt.getMonth() + 1).padStart(2, `0`)}`;
+        const m = computeUserMetrics(user, iso);
+        windowDays.push({
+          iso,
+          shortLbl,
+          calIn: Math.round(m.foodTotals.cal),
+          targetCal: m.targetCal,
+          weight: m.weight
+        });
+      }
+
+      // 1. Calorie Pixel Bar Chart SVG
+      const calBox = document.getElementById(`calorie-chart-box`);
+      if (calBox) {
+        const W = 440;
+        const H = 195;
+        const padL = 38;
+        const padR = 12;
+        const padT = 18;
+        const padB = 28;
+        const plotW = W - padL - padR;
+        const plotH = H - padT - padB;
+        const maxVal = Math.max(2200, ...windowDays.map((d) => Math.max(d.calIn, d.targetCal))) * 1.1;
+
+        let gridSvg = ``;
+        for (let g = 0; g <= 3; g++) {
+          const val = Math.round((maxVal / 3) * g);
+          const y = padT + plotH - (val / maxVal) * plotH;
+          gridSvg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="var(--outline-variant)" stroke-dasharray="3 3" stroke-width="1"/>
+                      <text x="${padL - 4}" y="${y + 3}" text-anchor="end" font-size="9" font-family="var(--font-label)" fill="var(--on-surface-variant)">${val}</text>`;
+        }
+
+        const slotW = plotW / windowDays.length;
+        let barsSvg = ``;
+        let targetPts = [];
+        for (let i = 0; i < windowDays.length; i++) {
+          const d = windowDays[i];
+          const cx = padL + i * slotW + slotW / 2;
+          const barW = Math.min(26, slotW * 0.56);
+          const barH = Math.max(2, (d.calIn / maxVal) * plotH);
+          const barY = padT + plotH - barH;
+          const targetY = padT + plotH - (d.targetCal / maxVal) * plotH;
+          targetPts.push(`${cx},${targetY.toFixed(1)}`);
+
+          const fillCol = d.iso === appState.activeDate ? `var(--primary)` : `var(--primary-container)`;
+          barsSvg += `<rect x="${(cx - barW / 2).toFixed(1)}" y="${barY.toFixed(1)}" width="${barW}" height="${barH.toFixed(1)}" fill="${fillCol}" stroke="var(--outline)" stroke-width="1.5" shape-rendering="crispEdges"/>`;
+          if (d.calIn > 0) {
+            barsSvg += `<text x="${cx.toFixed(1)}" y="${(barY - 4).toFixed(1)}" text-anchor="middle" font-size="8.5" font-weight="700" font-family="var(--font-label)" fill="var(--on-surface)">${d.calIn}</text>`;
+          }
+          barsSvg += `<text x="${cx.toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="9" font-weight="${d.iso === appState.activeDate ? `700` : `500`}" font-family="var(--font-label)" fill="var(--on-surface)">${d.shortLbl}</text>`;
+        }
+
+        const polySvg = `<polyline points="${targetPts.join(` `)}" fill="none" stroke="var(--secondary)" stroke-width="2.5" stroke-dasharray="4 3"/>`;
+        const dotsSvg = targetPts.map((pt) => {
+          const [px, py] = pt.split(`,`);
+          return `<rect x="${Number(px) - 3}" y="${Number(py) - 3}" width="6" height="6" fill="var(--secondary)" stroke="var(--surface-container-low)" stroke-width="1"/>`;
+        }).join(``);
+
+        calBox.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="195" role="img" aria-label="Biểu đồ Calo nạp so với mục tiêu 7 ngày">
+          ${gridSvg}${barsSvg}${polySvg}${dotsSvg}
+        </svg>`;
+      }
+
+      // 2. Weight Trend Pixel Line Chart SVG
+      const wBox = document.getElementById(`weight-chart-box`);
+      if (wBox) {
+        const W = 440;
+        const H = 155;
+        const padL = 38;
+        const padR = 16;
+        const padT = 18;
+        const padB = 26;
+        const plotW = W - padL - padR;
+        const plotH = H - padT - padB;
+
+        const weights = windowDays.map((d) => d.weight);
+        const minW = Math.floor(Math.min(...weights) - 1.5);
+        const maxW = Math.ceil(Math.max(...weights) + 1.5);
+        const span = Math.max(2, maxW - minW);
+
+        let gridSvg = ``;
+        for (let g = 0; g <= 2; g++) {
+          const val = Number((minW + (span / 2) * g).toFixed(1));
+          const y = padT + plotH - ((val - minW) / span) * plotH;
+          gridSvg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="var(--outline-variant)" stroke-dasharray="3 3" stroke-width="1"/>
+                      <text x="${padL - 4}" y="${y + 3}" text-anchor="end" font-size="9" font-family="var(--font-label)" fill="var(--on-surface-variant)">${val}</text>`;
+        }
+
+        const slotW = plotW / windowDays.length;
+        const pts = [];
+        let labelsSvg = ``;
+        for (let i = 0; i < windowDays.length; i++) {
+          const d = windowDays[i];
+          const cx = padL + i * slotW + slotW / 2;
+          const cy = padT + plotH - ((d.weight - minW) / span) * plotH;
+          pts.push({ cx, cy, d });
+          labelsSvg += `<text x="${cx.toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="9" font-family="var(--font-label)" fill="var(--on-surface)">${d.shortLbl}</text>`;
+        }
+
+        const lineSvg = `<polyline points="${pts.map((p) => `${p.cx.toFixed(1)},${p.cy.toFixed(1)}`).join(` `)}" fill="none" stroke="var(--tertiary)" stroke-width="2.5"/>`;
+        const nodesSvg = pts.map((p) => `
+          <rect x="${(p.cx - 4).toFixed(1)}" y="${(p.cy - 4).toFixed(1)}" width="8" height="8" fill="${p.d.iso === appState.activeDate ? `var(--primary)` : `var(--tertiary)`}" stroke="var(--outline)" stroke-width="1.5"/>
+          <text x="${p.cx.toFixed(1)}" y="${(p.cy - 8).toFixed(1)}" text-anchor="middle" font-size="8.5" font-weight="700" font-family="var(--font-label)" fill="var(--on-surface)">${p.d.weight}</text>
+        `).join(``);
+
+        wBox.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="155" role="img" aria-label="Biểu đồ xu hướng cân nặng 7 ngày">
+          ${gridSvg}${lineSvg}${nodesSvg}${labelsSvg}
+        </svg>`;
+      }
+    }
+
+    function renderHistoryTable() {
+      const user = getActiveUser();
+      const dates = Object.keys(user.logs || {}).filter((d) => {
+        const l = user.logs[d];
+        return (l.foods && l.foods.length > 0) || (l.activities && l.activities.length > 0) || (l.waterMl > 0) || (l.sleepHours !== null) || l.weightLogged;
+      }).sort().reverse();
+
+      const countBadge = document.getElementById(`history-days-count`);
+      const container = document.getElementById(`history-table-container`);
+      if (countBadge) countBadge.textContent = `${dates.length} ngày có dữ liệu`;
+      if (!container) return;
+
+      if (dates.length === 0) {
+        container.innerHTML = `<div class="empty-box">Chưa có ngày nào được ghi nhận. Khi bạn thêm món ăn, nước, giấc ngủ hoặc cân nặng, lịch sử đa ngày sẽ hiển thị tại đây.</div>`;
+        return;
+      }
+
+      const rowsHtml = dates.slice(0, 14).map((d) => {
+        const l = user.logs[d];
+        const m = computeUserMetrics(user, d);
+        const isCurrent = d === appState.activeDate;
+        return `<tr>
+          <td><button type="button" class="btn btn-sm ${isCurrent ? `btn-primary` : ``}" onclick="setActiveDate('${d}')">${d}</button></td>
+          <td class="tabular-num">${m.weight} kg</td>
+          <td class="tabular-num">${Math.round(m.foodTotals.cal)} / ${m.targetCal}</td>
+          <td class="tabular-num">${m.foodTotals.pro.toFixed(0)}g</td>
+          <td class="tabular-num">${l.waterMl || 0}ml</td>
+          <td class="tabular-num">${l.sleepHours !== null ? `${l.sleepHours}h` : `-`}</td>
+        </tr>`;
+      }).join(``);
+
+      container.innerHTML = `
+        <div class="pixel-table-wrap">
+          <table class="pixel-table">
+            <thead>
+              <tr>
+                <th>Ngày</th>
+                <th>Cân</th>
+                <th>Calo</th>
+                <th>Đạm</th>
+                <th>Nước</th>
+                <th>Ngủ</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAll() {
+      renderHeader();
+      renderKPIs();
+      renderProfileCollapse();
+      renderProfileSummary();
+      renderWaterSection();
+      renderSleepSection();
+      renderFoodCatalog();
+      renderFoodLog();
+      renderActivityCatalog();
+      renderActivityLog();
+      renderCharts();
+      renderHistoryTable();
+    }
+
+    // =========================================================================
+    // 9. INITIALIZATION (Async load from notebookAppApi + notifyAppReady)
+    // =========================================================================
+    async function initApp() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && saved.users && saved.users.user1 && saved.users.user2) {
+            appState = saved;
+            if (!appState.activeDate) appState.activeDate = getLocalTodayISO();
+          }
+        }
+      } catch (err) {
+        // Fallback smoothly to default state
+      }
+
+      renderAll();
+
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+          window.notebookAppApi.notifyAppReady();
+        }
+      } catch (err) {
+        // Ignore if running standalone outside host
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>

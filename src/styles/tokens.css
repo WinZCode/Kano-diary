@@ -1,0 +1,146 @@
+/*
+ * Design tokens của Kano Diary — chép từ mockup docs/design/kano-mockup.html (phong cách pixel / sakura pink).
+ * Lớp 1 (:root): biến CSS thô, dùng được ở mọi nơi bằng var(--...).
+ * Lớp 2 (@theme inline): ánh xạ sang Tailwind để có class như bg-primary, shadow-pixel, font-headline.
+ * Quy tắc: component KHÔNG hardcode mã màu — chỉ dùng class/biến ở đây (xem CLAUDE.md §9).
+ */
+
+:root {
+  /* ---- Bề mặt ---- */
+  --background: #fff0f7; /* nền hồng sakura pastel */
+  --background-grid: #ffd9ec; /* chấm lưới pixel trên nền */
+  --surface-container-low: #ffffff; /* thẻ pixel trắng */
+  --surface-container: #ffe4f1; /* ô nhập, dải hồng nhạt */
+  --surface-container-high: #ffcce5; /* hover / active */
+
+  /* ---- Chữ ---- */
+  --on-surface: #4a0730; /* magenta đậm, tương phản >12:1 */
+  --on-surface-variant: #70164a; /* tím mận, >7.8:1 */
+
+  /* ---- Viền ---- */
+  --outline: #8f1d5e; /* viền pixel */
+  --outline-variant: #f0b2d2; /* đường kẻ mảnh, gridline */
+
+  /* ---- Màu thương hiệu ---- */
+  --primary: #c21875; /* hồng magenta, >5.5:1 trên nền trắng */
+  --primary-hover: #a1105f;
+  --on-primary: #ffffff;
+  --primary-container: #ffbddf;
+  --on-primary-container: #4a0730;
+  --secondary: #682496; /* tím nho pixel */
+  --secondary-container: #eedbff;
+  --tertiary: #006f9e; /* xanh nước — dùng cho mục Nước uống */
+  --tertiary-container: #d9f3ff;
+
+  /* ---- Trạng thái ---- */
+  --error: #b8142c;
+  --on-error: #ffffff;
+  --error-container: #ffe0e5;
+  --positive: #137544; /* đạt mục tiêu */
+  --positive-container: #dbf7e8;
+  --warning: #a35200; /* vượt calo, cảnh báo */
+  --warning-container: #fff0d6;
+
+  /* ---- Màu biểu đồ (thứ tự cố định cho các series) ---- */
+  --data-1: #c21875;
+  --data-2: #682496;
+  --data-3: #006f9e;
+  --data-4: #a35200;
+  --data-context: #d6a4c0; /* dữ liệu nền / so sánh */
+
+  /* ---- Cỡ chữ (co giãn theo màn hình) ---- */
+  --display-size: clamp(1.5rem, 1.2rem + 1.1vw, 2.05rem);
+  --headline-size: clamp(1.125rem, 1rem + 0.45vw, 1.35rem);
+  --subhead-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.08rem);
+  --body-size: clamp(0.9375rem, 0.9rem + 0.12vw, 1rem);
+  --label-size: 0.75rem;
+
+  /* ---- Hình khối pixel ---- */
+  --rounded: 2px;
+  --rounded-lg: 4px;
+
+  /* ---- Chuyển động ---- */
+  --focus: var(--primary);
+  --dur-micro: 100ms;
+  --dur-short: 180ms;
+  --dur-long: 320ms;
+}
+
+/* Ánh xạ sang Tailwind. "inline" để class dùng thẳng var(--...) ở trên. */
+@theme inline {
+  /* Màu → bg-*, text-*, border-*, ... */
+  --color-background: var(--background);
+  --color-background-grid: var(--background-grid);
+  --color-surface: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-high: var(--surface-container-high);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-error: var(--error);
+  --color-on-error: var(--on-error);
+  --color-error-container: var(--error-container);
+  --color-positive: var(--positive);
+  --color-positive-container: var(--positive-container);
+  --color-warning: var(--warning);
+  --color-warning-container: var(--warning-container);
+  --color-data-1: var(--data-1);
+  --color-data-2: var(--data-2);
+  --color-data-3: var(--data-3);
+  --color-data-4: var(--data-4);
+  --color-data-context: var(--data-context);
+
+  /* Cỡ chữ → text-display, text-headline, text-subhead, text-body, text-label */
+  --text-display: var(--display-size);
+  --text-display--line-height: 1.15;
+  --text-headline: var(--headline-size);
+  --text-headline--line-height: 1.25;
+  --text-subhead: var(--subhead-size);
+  --text-body: var(--body-size);
+  --text-body--line-height: 1.55;
+  --text-label: var(--label-size);
+  --text-kpi: clamp(1.35rem, 1.1rem + 0.8vw, 1.85rem); /* số lớn trên thẻ chỉ số */
+  --text-kpi--line-height: 1.1;
+
+  /* Bo góc → rounded-pixel, rounded-pixel-lg */
+  --radius-pixel: var(--rounded);
+  --radius-pixel-lg: var(--rounded-lg);
+}
+
+/*
+ * Token định nghĩa thẳng trong @theme (không qua :root) vì tên trùng namespace của Tailwind.
+ * Tailwind tự xuất chúng thành biến CSS, nên vẫn dùng được var(--font-body), var(--shadow-pixel)...
+ */
+@theme {
+  /*
+   * Font → font-pixel, font-headline, font-body, font-label
+   * Các biến --font-*-src do next/font gắn vào <html> (src/app/layout.tsx).
+   * Mockup dùng DM Sans cho body nhưng DM Sans KHÔNG có dấu tiếng Việt → thay bằng Be Vietnam Pro.
+   * Silkscreen cũng không có dấu tiếng Việt → chỉ dùng cho SỐ và chữ không dấu.
+   */
+  --font-pixel: var(--font-silkscreen-src), var(--font-jetbrains-src), monospace;
+  --font-headline: var(--font-jetbrains-src), var(--font-be-vietnam-src), sans-serif;
+  --font-body: var(--font-be-vietnam-src), sans-serif;
+  --font-label: var(--font-jetbrains-src), monospace;
+
+  /* Bóng pixel (khối, không mờ) → shadow-pixel, shadow-pixel-sm, shadow-pixel-pink... */
+  --shadow-pixel: 4px 4px 0 var(--outline);
+  --shadow-pixel-sm: 2px 2px 0 var(--outline);
+  --shadow-pixel-pink: 4px 4px 0 var(--primary);
+  --shadow-pixel-purple: 4px 4px 0 var(--secondary);
+  --shadow-pixel-cyan: 4px 4px 0 var(--tertiary);
+
+  /* Easing → ease-pixel-out, ease-pixel-in-out */
+  --ease-pixel-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-pixel-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}

@@ -1,0 +1,47 @@
+/*
+ * CSS toàn cục: nạp Tailwind + design tokens, rồi đặt style nền giống mockup KANO.
+ * Style của từng component viết bằng class Tailwind trong component, KHÔNG thêm vào đây.
+ */
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+@layer base {
+  html,
+  body {
+    overflow-x: clip;
+    /* Nền hồng có lưới chấm pixel 16px như mockup */
+    background-color: var(--background);
+    background-image: radial-gradient(var(--background-grid) 1.5px, transparent 1.5px);
+    background-size: 16px 16px;
+    color: var(--on-surface);
+    font-family: var(--font-body);
+    font-size: var(--body-size);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Input/button kế thừa font thay vì font mặc định của trình duyệt */
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Viền focus pixel rõ ràng cho người dùng bàn phím */
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* Tôn trọng cài đặt giảm chuyển động của hệ điều hành */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

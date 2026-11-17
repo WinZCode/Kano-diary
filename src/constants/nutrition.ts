@@ -54,6 +54,20 @@ export const KCAL_PER_G = { protein: 4, carb: 4, fat: 9 } as const;
 export type GoalType = "lose" | "maintain" | "gain";
 export type Speed = "slow" | "medium" | "fast";
 
+// Danh sách giá trị hợp lệ — dùng cho z.enum() và vòng lặp hiển thị lựa chọn.
+export const SEXES = ["male", "female"] as const satisfies readonly Sex[];
+export const ACTIVITY_LEVELS = ["sedentary", "light", "moderate", "active"] as const satisfies readonly ActivityLevel[];
+export const GOAL_TYPES = ["lose", "maintain", "gain"] as const satisfies readonly GoalType[];
+export const SPEEDS = ["slow", "medium", "fast"] as const satisfies readonly Speed[];
+
+export const SEX_LABELS: Readonly<Record<Sex, string>> = { male: "Nam", female: "Nữ" };
+export const GOAL_LABELS: Readonly<Record<GoalType, string>> = {
+  lose: "Giảm cân",
+  maintain: "Duy trì",
+  gain: "Tăng cân",
+};
+export const SPEED_LABELS: Readonly<Record<Speed, string>> = { slow: "Chậm", medium: "Vừa", fast: "Nhanh" };
+
 /**
  * Mức chênh calo mỗi ngày theo tốc độ (kcal). Giảm cân = thâm hụt, tăng cân = thặng dư cùng mức.
  * Người dùng chọn kcal cố định (giống sheet: 500 = Vừa). 500 kcal/ngày ≈ 0.45 kg/tuần.
@@ -80,6 +94,13 @@ export type MacroRatios = { protein: number; carb: number; fat: number };
 export type RatioMacroPreset = "balanced" | "low-fat" | "low-carb" | "high-protein";
 /** "sheet" = protein 2.2 g × khối nạc (sheet Thiết lập), không phải tỉ lệ cố định. */
 export type MacroPreset = "sheet" | RatioMacroPreset;
+export const MACRO_PRESETS = [
+  "sheet",
+  "balanced",
+  "low-fat",
+  "low-carb",
+  "high-protein",
+] as const satisfies readonly MacroPreset[];
 
 export const MACRO_PRESET_RATIOS: Readonly<Record<RatioMacroPreset, MacroRatios>> = {
   balanced: { protein: 0.25, carb: 0.5, fat: 0.25 },

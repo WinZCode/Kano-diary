@@ -7,7 +7,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { HOME_PATH, LOGIN_PATH, safeNextPath } from "@/lib/auth/routes";
+import { LOGIN_PATH, safeNextPath } from "@/lib/auth/routes";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/types/form-state";
 import { authErrorMessage, logAuthError } from "./errors";
@@ -83,7 +83,7 @@ export async function signUp(
       message: `Đã gửi email xác nhận tới ${parsed.data.email}. Mở link trong email để kích hoạt tài khoản.`,
     };
   }
-  redirect(HOME_PATH); // Bước 6: đổi thành /onboarding
+  redirect("/onboarding"); // tài khoản mới → nhập dữ liệu cá nhân trước
 }
 
 export async function signOut(): Promise<void> {

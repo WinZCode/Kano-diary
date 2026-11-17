@@ -263,7 +263,7 @@ Mockup dùng **DM Sans** cho chữ thường, nhưng DM Sans không có dấu ti
 - [x] **Bước 3** — UI primitives pixel (`components/ui`) + AppShell responsive (xem tại `/ui` khi chạy dev)
 - [x] **Bước 4** — Supabase: schema + RLS (`profiles`, `foods`, 5 bảng nhật ký), đăng nhập email/mật khẩu _(bảng `plans` dời sang Bước 5–6)_
 - [x] **Bước 5** — `lib/calc` + test: BMR/TDEE/sàn calo/số tuần/5 kiểu macro (đã chốt công thức)
-- [ ] Bước 6 — Onboarding + Plan
+- [x] **Bước 6** — Onboarding 4 bước (xem trước trực tiếp, chọn kiểu macro) + trang Kế hoạch; bảng `plans` + RPC `start_plan`; đổi kế hoạch = tạo mới, giữ lịch sử; calo làm tròn số nguyên
 - [ ] Bước 7 — Nhật ký: ăn uống, vận động, nước, ngủ, cân
 - [ ] Bước 8 — Dashboard + Progress + biểu đồ
 - [ ] Bước 9 — PWA, import Google Sheet, tính năng mở rộng

@@ -19,7 +19,11 @@ type SegmentedControlProps<V extends string> = {
   options: ReadonlyArray<SegmentOption<V>>;
   defaultValue?: V;
   tone?: "pink" | "purple";
+  /** "row": tất cả trên 1 hàng (mặc định). "stack": 1 cột trên mobile, 2 cột từ sm — cho nhãn dài. */
+  layout?: "row" | "stack";
   required?: boolean;
+  /** Thông báo lỗi hiển thị dưới nhóm lựa chọn. */
+  error?: string;
   className?: string;
 };
 
@@ -29,16 +33,20 @@ export function SegmentedControl<V extends string>({
   options,
   defaultValue,
   tone = "pink",
+  layout = "row",
   required,
+  error,
   className,
 }: SegmentedControlProps<V>) {
   const checkedBg = tone === "pink" ? "peer-checked:bg-primary" : "peer-checked:bg-secondary";
+  const errorId = error ? `${name}-error` : undefined;
   return (
-    <fieldset className={cn("flex flex-col gap-1", className)}>
+    <fieldset className={cn("flex flex-col gap-1", className)} aria-describedby={errorId}>
       <legend className="mb-1 font-label text-label font-bold text-on-surface-variant">{legend}</legend>
       <div
-        className="grid gap-1.5"
-        style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }} // số cột theo số lựa chọn
+        className={cn("grid gap-1.5", layout === "stack" && "grid-cols-1 sm:grid-cols-2")}
+        // Hàng ngang: số cột = số lựa chọn (giá trị động, không viết được bằng class tĩnh)
+        style={layout === "row" ? { gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` } : undefined}
       >
         {options.map((option) => (
           <label key={option.value} className="relative">
@@ -65,6 +73,11 @@ export function SegmentedControl<V extends string>({
           </label>
         ))}
       </div>
+      {error && (
+        <p id={errorId} role="alert" className="text-xs font-semibold text-error">
+          {error}
+        </p>
+      )}
     </fieldset>
   );
 }

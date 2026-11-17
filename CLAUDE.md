@@ -118,6 +118,8 @@ export function calcBmrKatch(leanMassKg: number): number {
 - Lấy người dùng ở server **chỉ** qua `getCurrentUser()` (`src/lib/auth/current-user.ts`) — gọi trong `<Suspense>`. Không dùng `supabase.auth.getSession()` ở server để xác thực (không kiểm chữ ký JWT); dùng `getClaims()`.
 - `src/proxy.ts` chỉ là kiểm tra "lạc quan" để chuyển trang — **không** thay thế việc kiểm tra user trong Server Action.
 - Bảng mới: cột `user_id uuid not null default auth.uid() references auth.users on delete cascade`, bật RLS, policy dùng `(select auth.uid()) = user_id`, GRANT tường minh cho `authenticated`.
+- Thao tác ghi nhiều bảng phải thành công/thất bại cùng nhau → viết hàm SQL `security invoker` (RLS vẫn áp dụng) và gọi bằng `supabase.rpc()`. Mẫu: `start_plan` trong `supabase/migrations/20261117100000_plans.sql`.
+- Chưa có type sinh từ Supabase CLI → dữ liệu đọc từ DB phải parse bằng Zod (mẫu: `features/plan/queries.ts`).
 - CHECK constraint không được phụ thuộc thời gian hiện tại (`current_date`, `now()`); kiểm tra kiểu đó bằng Zod.
 - `service_role` key **chỉ** dùng ở server, không bao giờ có tiền tố `NEXT_PUBLIC_`.
 - Không commit `.env.local` hay secret. Biến mới phải thêm vào `.env.example`.
